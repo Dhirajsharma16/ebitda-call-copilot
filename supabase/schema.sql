@@ -68,51 +68,24 @@ CREATE TRIGGER trigger_companies_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- 5. ROW LEVEL SECURITY (RLS) POLICIES
--- Enable RLS
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
-ALTER TABLE call_records ENABLE ROW LEVEL SECURITY;
+-- Disable RLS for seamless direct read/write from API and Frontend
+ALTER TABLE companies DISABLE ROW LEVEL SECURITY;
+ALTER TABLE call_records DISABLE ROW LEVEL SECURITY;
 
--- Allow public read/write access for anon key in demo / single-tenant setup
--- In multi-tenant environments with Supabase Auth, you can replace these with (auth.uid() = user_id)
-DROP POLICY IF EXISTS "Allow anon read access on companies" ON companies;
-CREATE POLICY "Allow anon read access on companies"
-    ON companies FOR SELECT
-    TO anon, authenticated
-    USING (true);
-
-DROP POLICY IF EXISTS "Allow anon insert access on companies" ON companies;
-CREATE POLICY "Allow anon insert access on companies"
-    ON companies FOR INSERT
-    TO anon, authenticated
+-- Or if you keep RLS enabled, allow public access for all roles:
+DROP POLICY IF EXISTS "Allow all access on companies" ON companies;
+CREATE POLICY "Allow all access on companies"
+    ON companies FOR ALL
+    TO public
+    USING (true)
     WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow anon update access on companies" ON companies;
-CREATE POLICY "Allow anon update access on companies"
-    ON companies FOR UPDATE
-    TO anon, authenticated
-    USING (true);
-
-DROP POLICY IF EXISTS "Allow anon delete access on companies" ON companies;
-CREATE POLICY "Allow anon delete access on companies"
-    ON companies FOR DELETE
-    TO anon, authenticated
-    USING (true);
-
-DROP POLICY IF EXISTS "Allow anon read access on call_records" ON call_records;
-CREATE POLICY "Allow anon read access on call_records"
-    ON call_records FOR SELECT
-    TO anon, authenticated
-    USING (true);
-
-DROP POLICY IF EXISTS "Allow anon insert access on call_records" ON call_records;
-CREATE POLICY "Allow anon insert access on call_records"
-    ON call_records FOR INSERT
-    TO anon, authenticated
+DROP POLICY IF EXISTS "Allow all access on call_records" ON call_records;
+CREATE POLICY "Allow all access on call_records"
+    ON call_records FOR ALL
+    TO public
+    USING (true)
     WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Allow anon update access on call_records" ON call_records;
-CREATE POLICY "Allow anon update access on call_records"
-    ON call_records FOR UPDATE
     TO anon, authenticated
     USING (true);
 

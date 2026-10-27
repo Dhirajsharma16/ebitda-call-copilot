@@ -272,11 +272,12 @@ class DatabaseService:
                 if search:
                     query = query.ilike("company_name", f"%{search}%")
                 res = query.execute()
-                return [_enrich_company(row) for row in res.data]
+                if res.data and len(res.data) > 0:
+                    return [_enrich_company(row) for row in res.data]
             except Exception as e:
                 logger.error(f"Supabase list_companies error: {e}")
 
-        # Fallback
+        # Fallback to in-memory store
         res = list(_memory_companies.values())
         if search:
             s = search.lower()
@@ -383,16 +384,17 @@ class DatabaseService:
                 if outcome:
                     query = query.eq("call_outcome", outcome)
                 res = query.execute()
-                calls = []
-                for row in res.data:
-                    comp_name = None
-                    if "companies" in row and isinstance(row["companies"], dict):
-                        comp_name = row["companies"].get("company_name")
-                    c_out = _enrich_call(row, comp_name)
-                    if overdue_only and not c_out.is_overdue:
-                        continue
-                    calls.append(c_out)
-                return calls
+                if res.data and len(res.data) > 0:
+                    calls = []
+                    for row in res.data:
+                        comp_name = None
+                        if "companies" in row and isinstance(row["companies"], dict):
+                            comp_name = row["companies"].get("company_name")
+                        c_out = _enrich_call(row, comp_name)
+                        if overdue_only and not c_out.is_overdue:
+                            continue
+                        calls.append(c_out)
+                    return calls
             except Exception as e:
                 logger.error(f"Supabase list_calls error: {e}")
 
