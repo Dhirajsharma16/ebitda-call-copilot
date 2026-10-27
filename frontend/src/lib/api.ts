@@ -1,4 +1,4 @@
-import { Company, CallRecord, EBITDACalculationResponse, AICallPrep, HealthStatus, FollowUpSummary } from './types';
+import { Company, CallRecord, EBITDACalculationResponse, AICallPrep, HealthStatus, FollowUpSummary, FollowUpEmailResponse, CompanyResearchResponse } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
@@ -250,6 +250,58 @@ export const api = {
     }
   },
 
+  async generateFollowUpEmail(payload: {
+    company_name: string;
+    contact_name?: string | null;
+    contact_designation?: string | null;
+    notes?: string | null;
+    ebitda?: number;
+    ebitda_margin_pct?: number;
+    follow_up_date?: string | null;
+  }): Promise<FollowUpEmailResponse> {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE_URL}/api/ai/follow-up-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }, 15000);
+      if (res.ok) return await res.json();
+    } catch {
+      // Fallback
+    }
+    const contact = payload.contact_name || 'there';
+    return {
+      subject: `Next steps: Operating efficiency & margin discussion for ${payload.company_name}`,
+      body: `Hi ${contact},\n\nThank you for taking a few moments to speak with me today regarding ${payload.company_name}'s operational priorities.\n\nKey takeaways from our brief discussion:\n• Focus on safeguarding operating margins against current overhead headwinds.\n• Reviewing how targeted process telemetry detects cost leakage across workflows.\n\nAs agreed, I look forward to connecting with you on ${payload.follow_up_date || 'next week'} for a brief 15-minute executive review.\n\nBest regards,\nExecutive Business Development`,
+      model_used: 'executive-synthesis-engine'
+    };
+  },
+
+  async researchCompany(payload: {
+    company_name: string;
+    industry?: string | null;
+  }): Promise<CompanyResearchResponse> {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE_URL}/api/ai/research-company`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }, 15000);
+      if (res.ok) return await res.json();
+    } catch {
+      // Fallback
+    }
+    return {
+      success: true,
+      data: {
+        business_challenges: `Operational overhead, supply chain latency, and labor cost escalation across ${payload.industry || 'primary operational facilities'}.`,
+        typical_ebitda_margin_range: '12% - 18%',
+        executive_hook: `Protecting operational margins against rising overhead and process friction.`
+      },
+      model: 'synthesis-engine'
+    };
+  },
+
   async seedDemo(): Promise<{ message: string }> {
     try {
       const res = await fetchWithTimeout(`${API_BASE_URL}/api/seed`, { method: 'POST' });
@@ -269,80 +321,80 @@ export const api = {
 const DEFAULT_SAMPLE_COMPANIES: Company[] = [
   {
     id: 'a1111111-1111-1111-1111-111111111111',
-    company_name: 'Apex Industrial Logistics Corp',
-    website: 'https://apex-logistics.example.com',
+    company_name: 'RapidRoute Trucking & Fleet',
+    website: 'https://rapidroute-fleet.example.com',
     industry: 'Transportation & Logistics',
     location: 'Dallas, TX, USA',
-    contact_name: 'Marcus Vance',
+    contact_name: 'John Miller',
     contact_designation: 'Chief Executive Officer',
-    business_challenges: 'Fleet fuel and maintenance expenses surging by 18% YoY. Operating under compressed margins due to driver retention bonuses and inefficient route dispatch.',
-    revenue: 42500000,
-    operating_expenses: 38250000,
-    ebitda: 4250000,
-    ebitda_margin_pct: 10.0,
+    business_challenges: 'Diesel fuel and truck maintenance consume 92% of all revenue. Operating at a tight 8% EBITDA margin where any fuel price hike wipes out net profit.',
+    revenue: 50000000,
+    operating_expenses: 46000000,
+    ebitda: 4000000,
+    ebitda_margin_pct: 8.0,
     created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
     updated_at: new Date(Date.now() - 86400000).toISOString(),
   },
   {
     id: 'b2222222-2222-2222-2222-222222222222',
-    company_name: 'Vanguard Precision Machining',
-    website: 'https://vanguard-precision.example.com',
-    industry: 'Manufacturing',
-    location: 'Cleveland, OH, USA',
-    contact_name: 'Elena Rostova',
-    contact_designation: 'Managing Director',
-    business_challenges: 'High scrap rates (4.8%) on CNC lines and bottlenecked inventory holding costs. Looking to protect EBITDA before upcoming private equity sponsor review.',
-    revenue: 28000000,
-    operating_expenses: 22400000,
-    ebitda: 5600000,
-    ebitda_margin_pct: 20.0,
+    company_name: 'CloudSync Software',
+    website: 'https://cloudsync-software.example.com',
+    industry: 'Enterprise Software / SaaS',
+    location: 'Boston, MA, USA',
+    contact_name: 'David Chen',
+    contact_designation: 'VP of Sales & Operations',
+    business_challenges: 'AWS cloud server hosting costs jumped 25% YoY, threatening their 30% EBITDA margin target before the upcoming investor funding round.',
+    revenue: 20000000,
+    operating_expenses: 14000000,
+    ebitda: 6000000,
+    ebitda_margin_pct: 30.0,
     created_at: new Date(Date.now() - 7 * 86400000).toISOString(),
     updated_at: new Date(Date.now() - 2 * 86400000).toISOString(),
   },
   {
     id: 'c3333333-3333-3333-3333-333333333333',
-    company_name: 'Synapse Cloud Systems',
-    website: 'https://synapsecloud.example.com',
-    industry: 'Enterprise Software / SaaS',
-    location: 'Boston, MA, USA',
-    contact_name: 'David Chen',
-    contact_designation: 'VP of Sales & Operations',
-    business_challenges: 'Customer acquisition costs (CAC) jumped 25% while net revenue retention declined to 102%. Heavy AWS infrastructure spend eroding gross margins.',
-    revenue: 15600000,
-    operating_expenses: 11200000,
-    ebitda: 4400000,
-    ebitda_margin_pct: 28.21,
+    company_name: 'GreenBean Coffee Cafes',
+    website: 'https://greenbean-cafes.example.com',
+    industry: 'Retail & Food Chain',
+    location: 'Chicago, IL, USA',
+    contact_name: 'Sarah Adams',
+    contact_designation: 'Chief Operating Officer',
+    business_challenges: 'Perishable dairy and coffee bean waste across 40 regional cafes is leaking $500,000/year, keeping their EBITDA margin compressed at 15%.',
+    revenue: 15000000,
+    operating_expenses: 12750000,
+    ebitda: 2250000,
+    ebitda_margin_pct: 15.0,
     created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
     updated_at: new Date(Date.now() - 4 * 86400000).toISOString(),
   },
   {
     id: 'd4444444-4444-4444-4444-444444444444',
-    company_name: 'Heritage Food Distributors',
-    website: 'https://heritagefoods.example.com',
-    industry: 'Wholesale Distribution',
-    location: 'Chicago, IL, USA',
-    contact_name: 'Sarah Jenkins',
-    contact_designation: 'Chief Operating Officer',
-    business_challenges: 'Cold-chain storage electricity spikes and perishable spoilage rate at 3.2%. Operating margin under 5% with high debt service burdens.',
-    revenue: 65000000,
-    operating_expenses: 61750000,
-    ebitda: 3250000,
-    ebitda_margin_pct: 5.0,
+    company_name: 'Precision Metal Parts',
+    website: 'https://precision-metalparts.example.com',
+    industry: 'Manufacturing',
+    location: 'Cleveland, OH, USA',
+    contact_name: 'Elena Rostova',
+    contact_designation: 'Managing Director',
+    business_challenges: 'CNC machine scrap rate at 4.8% is wasting $1.2M in raw aluminum and steel. Looking to optimize production efficiency to protect a 20% margin.',
+    revenue: 30000000,
+    operating_expenses: 24000000,
+    ebitda: 6000000,
+    ebitda_margin_pct: 20.0,
     created_at: new Date(Date.now() - 12 * 86400000).toISOString(),
     updated_at: new Date(Date.now() - 6 * 86400000).toISOString(),
   },
   {
     id: 'e5555555-5555-5555-5555-555555555555',
-    company_name: 'OmniCare Regional Diagnostics',
-    website: 'https://omnicarediagnostics.example.com',
+    company_name: 'MetroHealth Medical Centers',
+    website: 'https://metrohealth-centers.example.com',
     industry: 'Healthcare Services',
     location: 'Atlanta, GA, USA',
     contact_name: 'Dr. Robert Sterling',
     contact_designation: 'Executive Managing Director',
-    business_challenges: 'Administrative billing errors leading to 45-day delay in reimbursements and 12% revenue leakage in lab intake operations.',
-    revenue: 32000000,
-    operating_expenses: 24000000,
-    ebitda: 8000000,
+    business_challenges: 'Manual insurance billing paperwork errors cause 45-day reimbursement delays and tie up $3.5M in clinic cash flow.',
+    revenue: 40000000,
+    operating_expenses: 30000000,
+    ebitda: 10000000,
     ebitda_margin_pct: 25.0,
     created_at: new Date(Date.now() - 14 * 86400000).toISOString(),
     updated_at: new Date(Date.now() - 3 * 86400000).toISOString(),
@@ -353,16 +405,16 @@ const DEFAULT_SAMPLE_CALLS: CallRecord[] = [
   {
     id: 'f1111111-1111-1111-1111-111111111111',
     company_id: 'a1111111-1111-1111-1111-111111111111',
-    company_name: 'Apex Industrial Logistics Corp',
-    contact_name: 'Marcus Vance',
+    company_name: 'RapidRoute Trucking & Fleet',
+    contact_name: 'John Miller',
     call_date: new Date(Date.now() - 2 * 86400000).toISOString(),
-    notes: 'Discussed fleet operating cost compression. Marcus confirmed dispatch telemetry is fragmented across 3 systems. Open to a 20-min executive briefing next week.',
+    notes: 'Spoke with CEO John. He said diesel fuel costs are eating 92% of their sales. He agreed that cutting fuel waste by 3% saves them $1.3M straight to EBITDA. Promised to send a 1-page breakdown and call him back Tuesday at 10 AM.',
     call_outcome: 'Follow-up Required',
     follow_up_date: new Date(Date.now() - 86400000).toISOString(), // Overdue
     ai_preparation: {
-      opening_line: 'Marcus, noticed Apex expanded fleet routes across the south corridor—curious how you are safeguarding your 10% operating margins against diesel spikes.',
+      opening_line: 'John, noticed RapidRoute expanded interstate delivery fleets—curious how you are safeguarding your 8% operating margin against diesel spikes.',
       discovery_questions: [
-        'What is your biggest cost driver right now?',
+        'What is your single biggest cost driver on fuel?',
         'How quickly does dispatch identify route margin decay?'
       ]
     },
@@ -371,30 +423,42 @@ const DEFAULT_SAMPLE_CALLS: CallRecord[] = [
   },
   {
     id: 'f2222222-2222-2222-2222-222222222222',
-    company_id: 'b2222222-2222-2222-2222-222222222222',
-    company_name: 'Vanguard Precision Machining',
-    contact_name: 'Elena Rostova',
+    company_id: 'c3333333-3333-3333-3333-333333333333',
+    company_name: 'GreenBean Coffee Cafes',
+    contact_name: 'Sarah Adams',
     call_date: new Date(Date.now() - 86400000).toISOString(),
-    notes: 'Elena is preparing for PE board meeting next month. CNC scrap reduction directly impacts her EBITDA target. Requested calendar invite for Tuesday.',
+    notes: 'Sarah confirmed cafe milk and food waste is costing them $500k/yr before their board meeting. Scheduled a 15-minute live demo on Thursday at 2 PM.',
     call_outcome: 'Interested',
-    follow_up_date: new Date(Date.now() + 4 * 86400000).toISOString(),
+    follow_up_date: new Date(Date.now() + 3 * 86400000).toISOString(),
     ai_preparation: {
-      opening_line: 'Elena, reaching out because precision manufacturers we advise used predictive quality analytics to protect 150-200 bps of EBITDA.',
-      discovery_questions: ['How much does material scrap factor into your unit economics?']
+      opening_line: 'Sarah, reaching out because food chains we advise cut perishables waste by 18% to protect their 15% EBITDA margin.',
+      discovery_questions: ['How much does store-level perishables waste impact your bottom line?']
     },
     created_at: new Date(Date.now() - 86400000).toISOString(),
     is_overdue: false,
   },
   {
     id: 'f3333333-3333-3333-3333-333333333333',
-    company_id: 'c3333333-3333-3333-3333-333333333333',
-    company_name: 'Synapse Cloud Systems',
+    company_id: 'b2222222-2222-2222-2222-222222222222',
+    company_name: 'CloudSync Software',
     contact_name: 'David Chen',
     call_date: new Date(Date.now() - 4 * 86400000).toISOString(),
-    notes: 'Gatekeeper answered; David was in an offsite executive review. Left voicemail referencing cloud cost benchmarking.',
+    notes: 'Executive assistant answered; David was in an investor review. Left voicemail referencing how SaaS peers cut AWS server costs by 18% to protect their 30% margin.',
     call_outcome: 'No Answer',
     follow_up_date: new Date(Date.now() + 2 * 86400000).toISOString(),
     created_at: new Date(Date.now() - 4 * 86400000).toISOString(),
+    is_overdue: false,
+  },
+  {
+    id: 'f4444444-4444-4444-4444-444444444444',
+    company_id: 'd4444444-4444-4444-4444-444444444444',
+    company_name: 'Precision Metal Parts',
+    contact_name: 'Elena Rostova',
+    call_date: new Date(Date.now() - 3 * 86400000).toISOString(),
+    notes: 'Elena wants her head of factory operations on the call. Re-scheduled for next Monday to review machine defect inspection data.',
+    call_outcome: 'Follow-up Required',
+    follow_up_date: new Date(Date.now() + 5 * 86400000).toISOString(),
+    created_at: new Date(Date.now() - 3 * 86400000).toISOString(),
     is_overdue: false,
   }
 ];
@@ -402,9 +466,16 @@ const DEFAULT_SAMPLE_CALLS: CallRecord[] = [
 function getLocalCompanies(search?: string): Company[] {
   if (typeof window === 'undefined') return DEFAULT_SAMPLE_COMPANIES;
   const raw = localStorage.getItem('ebitda_copilot_companies');
-  let list: Company[] = raw ? JSON.parse(raw) : DEFAULT_SAMPLE_COMPANIES;
-  if (!raw) {
+  let list: Company[] = DEFAULT_SAMPLE_COMPANIES;
+  if (!raw || raw.includes('Apex Industrial Logistics Corp')) {
     localStorage.setItem('ebitda_copilot_companies', JSON.stringify(DEFAULT_SAMPLE_COMPANIES));
+    list = DEFAULT_SAMPLE_COMPANIES;
+  } else {
+    try {
+      list = JSON.parse(raw);
+    } catch {
+      list = DEFAULT_SAMPLE_COMPANIES;
+    }
   }
   if (search) {
     const s = search.toLowerCase();
@@ -475,9 +546,16 @@ function deleteLocalCompany(id: string) {
 function getLocalCalls(companyId?: string, outcome?: string, overdueOnly?: boolean): CallRecord[] {
   if (typeof window === 'undefined') return DEFAULT_SAMPLE_CALLS;
   const raw = localStorage.getItem('ebitda_copilot_calls');
-  let list: CallRecord[] = raw ? JSON.parse(raw) : DEFAULT_SAMPLE_CALLS;
-  if (!raw) {
+  let list: CallRecord[] = DEFAULT_SAMPLE_CALLS;
+  if (!raw || raw.includes('Apex Industrial')) {
     localStorage.setItem('ebitda_copilot_calls', JSON.stringify(DEFAULT_SAMPLE_CALLS));
+    list = DEFAULT_SAMPLE_CALLS;
+  } else {
+    try {
+      list = JSON.parse(raw);
+    } catch {
+      list = DEFAULT_SAMPLE_CALLS;
+    }
   }
 
   const now = new Date();

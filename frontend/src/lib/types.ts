@@ -93,3 +93,19 @@ export interface FollowUpSummary {
   overdue: CallRecord[];
   upcoming: CallRecord[];
 }
+
+export interface FollowUpEmailResponse {
+  subject: string;
+  body: string;
+  model_used: string;
+}
+
+export interface CompanyResearchResponse {
+  success: boolean;
+  data: {
+    business_challenges: string;
+    typical_ebitda_margin_range: string;
+    executive_hook: string;
+  };
+  model: string;
+}

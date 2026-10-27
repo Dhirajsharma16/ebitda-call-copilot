@@ -16,11 +16,11 @@ _memory_companies: Dict[str, Dict[str, Any]] = {}
 _memory_calls: Dict[str, Dict[str, Any]] = {}
 
 def _get_supabase_client():
-    if not settings.SUPABASE_URL or not (settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY):
+    key = settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY or settings.SUPABASE_PUBLISHABLE_KEY
+    if not settings.SUPABASE_URL or not key:
         return None
     try:
         from supabase import create_client, Client
-        key = settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY
         return create_client(settings.SUPABASE_URL, key)
     except Exception as e:
         logger.warning(f"Could not initialize Supabase client: {e}")
@@ -123,71 +123,71 @@ class DatabaseService:
         sample_companies = [
             {
                 "id": "a1111111-1111-1111-1111-111111111111",
-                "company_name": "Apex Industrial Logistics Corp",
-                "website": "https://apex-logistics.example.com",
+                "company_name": "RapidRoute Trucking & Fleet",
+                "website": "https://rapidroute-fleet.example.com",
                 "industry": "Transportation & Logistics",
                 "location": "Dallas, TX, USA",
-                "contact_name": "Marcus Vance",
+                "contact_name": "John Miller",
                 "contact_designation": "Chief Executive Officer",
-                "business_challenges": "Fleet fuel and maintenance expenses surging by 18% YoY. Operating under compressed margins due to driver retention bonuses and inefficient route dispatch.",
-                "revenue": 42500000.0,
-                "operating_expenses": 38250000.0,
+                "business_challenges": "Diesel fuel and truck maintenance consume 92% of all revenue. Operating at a tight 8% EBITDA margin where any fuel price hike wipes out net profit.",
+                "revenue": 50000000.0,
+                "operating_expenses": 46000000.0,
                 "created_at": now - timedelta(days=5),
                 "updated_at": now - timedelta(days=1),
             },
             {
                 "id": "b2222222-2222-2222-2222-222222222222",
-                "company_name": "Vanguard Precision Machining",
-                "website": "https://vanguard-precision.example.com",
-                "industry": "Manufacturing",
-                "location": "Cleveland, OH, USA",
-                "contact_name": "Elena Rostova",
-                "contact_designation": "Managing Director",
-                "business_challenges": "High scrap rates (4.8%) on CNC lines and bottlenecked inventory holding costs. Looking to protect EBITDA before upcoming private equity sponsor review.",
-                "revenue": 28000000.0,
-                "operating_expenses": 22400000.0,
+                "company_name": "CloudSync Software",
+                "website": "https://cloudsync-software.example.com",
+                "industry": "Enterprise Software / SaaS",
+                "location": "Boston, MA, USA",
+                "contact_name": "David Chen",
+                "contact_designation": "VP of Sales & Operations",
+                "business_challenges": "AWS cloud server hosting costs jumped 25% YoY, threatening their 30% EBITDA margin target before the upcoming investor funding round.",
+                "revenue": 20000000.0,
+                "operating_expenses": 14000000.0,
                 "created_at": now - timedelta(days=7),
                 "updated_at": now - timedelta(days=2),
             },
             {
                 "id": "c3333333-3333-3333-3333-333333333333",
-                "company_name": "Synapse Cloud Systems",
-                "website": "https://synapsecloud.example.com",
-                "industry": "Enterprise Software / SaaS",
-                "location": "Boston, MA, USA",
-                "contact_name": "David Chen",
-                "contact_designation": "VP of Sales & Operations",
-                "business_challenges": "Customer acquisition costs (CAC) jumped 25% while net revenue retention declined to 102%. Heavy AWS infrastructure spend eroding gross margins.",
-                "revenue": 15600000.0,
-                "operating_expenses": 11200000.0,
+                "company_name": "GreenBean Coffee Cafes",
+                "website": "https://greenbean-cafes.example.com",
+                "industry": "Retail & Food Chain",
+                "location": "Chicago, IL, USA",
+                "contact_name": "Sarah Adams",
+                "contact_designation": "Chief Operating Officer",
+                "business_challenges": "Perishable dairy and coffee bean waste across 40 regional cafes is leaking $500,000/year, keeping their EBITDA margin compressed at 15%.",
+                "revenue": 15000000.0,
+                "operating_expenses": 12750000.0,
                 "created_at": now - timedelta(days=10),
                 "updated_at": now - timedelta(days=4),
             },
             {
                 "id": "d4444444-4444-4444-4444-444444444444",
-                "company_name": "Heritage Food Distributors",
-                "website": "https://heritagefoods.example.com",
-                "industry": "Wholesale Distribution",
-                "location": "Chicago, IL, USA",
-                "contact_name": "Sarah Jenkins",
-                "contact_designation": "Chief Operating Officer",
-                "business_challenges": "Cold-chain storage electricity spikes and perishable spoilage rate at 3.2%. Operating margin under 5% with high debt service burdens.",
-                "revenue": 65000000.0,
-                "operating_expenses": 61750000.0,
+                "company_name": "Precision Metal Parts",
+                "website": "https://precision-metalparts.example.com",
+                "industry": "Manufacturing",
+                "location": "Cleveland, OH, USA",
+                "contact_name": "Elena Rostova",
+                "contact_designation": "Managing Director",
+                "business_challenges": "CNC machine scrap rate at 4.8% is wasting $1.2M in raw aluminum and steel. Looking to optimize production efficiency to protect a 20% margin.",
+                "revenue": 30000000.0,
+                "operating_expenses": 24000000.0,
                 "created_at": now - timedelta(days=12),
                 "updated_at": now - timedelta(days=6),
             },
             {
                 "id": "e5555555-5555-5555-5555-555555555555",
-                "company_name": "OmniCare Regional Diagnostics",
-                "website": "https://omnicarediagnostics.example.com",
+                "company_name": "MetroHealth Medical Centers",
+                "website": "https://metrohealth-centers.example.com",
                 "industry": "Healthcare Services",
                 "location": "Atlanta, GA, USA",
                 "contact_name": "Dr. Robert Sterling",
                 "contact_designation": "Executive Managing Director",
-                "business_challenges": "Administrative billing errors leading to 45-day delay in reimbursements and 12% revenue leakage in lab intake operations.",
-                "revenue": 32000000.0,
-                "operating_expenses": 24000000.0,
+                "business_challenges": "Manual insurance billing paperwork errors cause 45-day reimbursement delays and tie up $3.5M in clinic cash flow.",
+                "revenue": 40000000.0,
+                "operating_expenses": 30000000.0,
                 "created_at": now - timedelta(days=14),
                 "updated_at": now - timedelta(days=3),
             }
@@ -200,41 +200,52 @@ class DatabaseService:
             {
                 "id": "f1111111-1111-1111-1111-111111111111",
                 "company_id": "a1111111-1111-1111-1111-111111111111",
-                "contact_name": "Marcus Vance",
+                "contact_name": "John Miller",
                 "call_date": now - timedelta(days=2),
-                "notes": "Discussed fleet operating cost compression. Marcus confirmed dispatch telemetry is fragmented. Open to a 20-min executive briefing on telemetry consolidation.",
+                "notes": "Spoke with CEO John. He said diesel fuel costs are eating 92% of their sales. He agreed that cutting fuel waste by 3% saves them $1.3M straight to EBITDA. Promised to send a 1-page breakdown and call him back Tuesday at 10 AM.",
                 "call_outcome": "Follow-up Required",
                 "follow_up_date": now - timedelta(days=1), # Overdue for instant UI demonstration
                 "ai_preparation": {
-                    "opening_line": "Marcus, noticed Apex expanded fleet routes across the south corridor—curious how you are safeguarding your 10% operating margins against diesel spikes.",
-                    "discovery_questions": ["What is your biggest cost driver right now?", "How quickly does dispatch identify route margin decay?"]
+                    "opening_line": "John, noticed RapidRoute expanded interstate delivery fleets—curious how you are safeguarding your 8% operating margin against diesel spikes.",
+                    "discovery_questions": ["What is your single biggest cost driver on fuel?", "How quickly does dispatch identify route margin decay?"]
                 },
                 "created_at": now - timedelta(days=2),
             },
             {
                 "id": "f2222222-2222-2222-2222-222222222222",
-                "company_id": "b2222222-2222-2222-2222-222222222222",
-                "contact_name": "Elena Rostova",
+                "company_id": "c3333333-3333-3333-3333-333333333333",
+                "contact_name": "Sarah Adams",
                 "call_date": now - timedelta(days=1),
-                "notes": "Elena is preparing for PE board meeting next month. CNC scrap reduction directly impacts her EBITDA target. Sent brief, requested invite next Tuesday.",
+                "notes": "Sarah confirmed cafe milk and food waste is costing them $500k/yr before their board meeting. Scheduled a 15-minute live demo on Thursday at 2 PM.",
                 "call_outcome": "Interested",
-                "follow_up_date": now + timedelta(days=4),
+                "follow_up_date": now + timedelta(days=3),
                 "ai_preparation": {
-                    "opening_line": "Elena, reaching out because precision manufacturers we advise used predictive quality analytics to protect 150-200 bps of EBITDA.",
-                    "discovery_questions": ["How much does material scrap factor into your unit economics?"]
+                    "opening_line": "Sarah, reaching out because food chains we advise cut perishables waste by 18% to protect their 15% EBITDA margin.",
+                    "discovery_questions": ["How much does store-level perishables waste impact your bottom line?"]
                 },
                 "created_at": now - timedelta(days=1),
             },
             {
                 "id": "f3333333-3333-3333-3333-333333333333",
-                "company_id": "c3333333-3333-3333-3333-333333333333",
+                "company_id": "b2222222-2222-2222-2222-222222222222",
                 "contact_name": "David Chen",
                 "call_date": now - timedelta(days=4),
-                "notes": "Gatekeeper answered; David was in offsite meeting. Left voicemail regarding cloud cost benchmarking.",
+                "notes": "Executive assistant answered; David was in an investor review. Left voicemail referencing how SaaS peers cut AWS server costs by 18% to protect their 30% margin.",
                 "call_outcome": "No Answer",
                 "follow_up_date": now + timedelta(days=2),
                 "ai_preparation": None,
                 "created_at": now - timedelta(days=4),
+            },
+            {
+                "id": "f4444444-4444-4444-4444-444444444444",
+                "company_id": "d4444444-4444-4444-4444-444444444444",
+                "contact_name": "Elena Rostova",
+                "call_date": now - timedelta(days=3),
+                "notes": "Elena wants her head of factory operations on the call. Re-scheduled for next Monday to review machine defect inspection data.",
+                "call_outcome": "Follow-up Required",
+                "follow_up_date": now + timedelta(days=5),
+                "ai_preparation": None,
+                "created_at": now - timedelta(days=3),
             }
         ]
 

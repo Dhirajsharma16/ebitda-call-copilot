@@ -15,7 +15,10 @@ import {
   Database, 
   CheckCircle2, 
   AlertTriangle,
-  RotateCcw
+  RotateCcw,
+  ShieldAlert,
+  Flame,
+  Activity
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { HealthStatus } from '@/lib/types';
@@ -47,7 +50,7 @@ function NavbarContent() {
     try {
       const res = await api.seedDemo();
       setSeedNotice(res.message);
-      setTimeout(() => setSeedNotice(null), 4000);
+      setTimeout(() => setSeedNotice(null), 3500);
       window.location.reload();
     } catch {
       setSeedNotice('Error refreshing demo data');
@@ -66,29 +69,34 @@ function NavbarContent() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-slate-800 text-slate-100">
+    <nav className="sticky top-0 z-50 bg-[#080C14]/80 backdrop-blur-xl border-b border-white/[0.08] text-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Brand */}
+          {/* Brand Identity */}
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                <PhoneCall className="w-5 h-5" />
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 border border-white/20 group-hover:scale-105 transition-all duration-200">
+                  <Activity className="w-5 h-5 text-blue-100 group-hover:rotate-6 transition-transform" />
+                </div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#080C14]" />
               </div>
+
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-lg tracking-tight text-white">EBITDA Copilot</span>
-                  <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/30 rounded-md">
-                    AI Cold Call
+                  <span className="font-extrabold text-base tracking-tight text-white group-hover:text-blue-400 transition-colors">
+                    EBITDA<span className="text-blue-500">.</span>COPILOT
                   </span>
                 </div>
-                <span className="text-[11px] text-slate-400 hidden sm:inline">Executive Sales & Margin Strategy</span>
+                <span className="text-[11px] text-slate-400 font-medium hidden sm:inline tracking-tight">
+                  Executive Cold Call Intelligence
+                </span>
               </div>
             </Link>
           </div>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-1 bg-slate-900/60 p-1 rounded-xl border border-white/[0.06]">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
@@ -96,44 +104,47 @@ function NavbarContent() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-tight transition-all duration-150 ${
                     isActive
-                      ? 'bg-blue-600/15 text-blue-400 border border-blue-500/30 shadow-sm'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                      : 'text-slate-400 hover:text-slate-100 hover:bg-white/[0.05]'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-blue-400' : 'text-slate-400'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                   {link.name}
                 </Link>
               );
             })}
           </div>
 
-          {/* Status & Actions */}
+          {/* System Status & Quick Actions */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* System Status Pill */}
-            <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-300">
-              <div className={`w-2 h-2 rounded-full ${health ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-              <span className="font-mono text-[11px]">
-                {health ? (health.groq_configured ? 'Groq AI Live' : 'AI Fallback') : 'Standalone Mode'}
+            {/* Health pill */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-white/[0.08] text-[11px] text-slate-300">
+              <span className="relative flex h-2 w-2">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${health ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${health ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+              </span>
+              <span className="font-mono text-slate-300">
+                {health ? (health.groq_configured ? 'Groq Llama 3.3' : 'Rule Synthesis') : 'Standalone Local'}
               </span>
             </div>
 
-            {/* Reset / Demo seed button */}
+            {/* Demo Reset button */}
             <button
               onClick={handleSeed}
               disabled={loadingSeed}
-              title="Reset with realistic demo companies & calls"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-800/80 hover:bg-slate-700/80 hover:text-white border border-slate-700/60 rounded-lg transition-colors"
+              title="Reset sample prospect accounts and call logs"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-900/80 hover:bg-slate-800 hover:text-white border border-white/[0.08] rounded-xl transition-all"
             >
-              <RotateCcw className={`w-3.5 h-3.5 ${loadingSeed ? 'animate-spin' : ''}`} />
-              <span>Demo Data</span>
+              <RotateCcw className={`w-3.5 h-3.5 text-slate-400 ${loadingSeed ? 'animate-spin text-blue-400' : ''}`} />
+              <span>Sample Data</span>
             </button>
 
-            {/* Quick Action: Start Call Session */}
+            {/* Primary Action */}
             <Link
               href="/workspace"
-              className="flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-lg shadow-md shadow-blue-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-blue-600/30 border border-blue-400/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <PhoneCall className="w-3.5 h-3.5" />
               <span>Start Call</span>
@@ -144,24 +155,25 @@ function NavbarContent() {
           <div className="flex md:hidden items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white focus:outline-none"
+              className="p-2 rounded-xl bg-slate-900 border border-white/[0.08] text-slate-300 hover:text-white"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Notification Toast for demo seed */}
+      {/* Demo Seed Toast notification */}
       {seedNotice && (
-        <div className="bg-blue-600 text-white text-xs font-medium text-center py-1.5 px-4 shadow-sm animate-fade-in">
-          {seedNotice}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold text-center py-2 px-4 shadow-md animate-fade-in flex items-center justify-center gap-2">
+          <CheckCircle2 className="w-4 h-4" />
+          <span>{seedNotice}</span>
         </div>
       )}
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-1.5">
+        <div className="md:hidden bg-slate-950/95 border-b border-white/[0.08] px-4 pt-2 pb-5 space-y-2 backdrop-blur-xl">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -170,36 +182,36 @@ function NavbarContent() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold ${
                   isActive
-                    ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-300 hover:bg-slate-900'
                 }`}
               >
-                <Icon className="w-5 h-5 text-blue-400" />
+                <Icon className="w-4 h-4" />
                 {link.name}
               </Link>
             );
           })}
 
-          <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
+          <div className="pt-3 border-t border-white/[0.08] flex flex-col gap-2">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 handleSeed();
               }}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-slate-300 bg-slate-800 rounded-lg"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold text-slate-300 bg-slate-900 rounded-xl border border-white/[0.08]"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5" />
               Reset Demo Data
             </button>
             <Link
               href="/workspace"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-blue-600 rounded-xl"
             >
               <PhoneCall className="w-4 h-4" />
-              Start Live Call Session
+              Launch Live Workspace
             </Link>
           </div>
         </div>
@@ -210,7 +222,7 @@ function NavbarContent() {
 
 export default function Navbar() {
   return (
-    <Suspense fallback={<nav className="h-16 border-b border-slate-800 bg-[#0B0F19]" />}>
+    <Suspense fallback={<nav className="h-16 border-b border-white/[0.08] bg-[#080C14]" />}>
       <NavbarContent />
     </Suspense>
   );

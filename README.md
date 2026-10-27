@@ -38,10 +38,11 @@ ebitda-copilot/
 
 | Component | Technology | Target Hosting | Notes |
 | :--- | :--- | :--- | :--- |
-| **Frontend** | Next.js 16, TypeScript, Tailwind CSS v4 | **Vercel** | Responsive dark theme, blue accents (`#3B82F6`) |
+| **Frontend** | Next.js 16, TypeScript, Tailwind CSS v4 | **Vercel** | Responsive dark obsidian theme, blue & purple accents |
 | **Backend** | Python 3.11+, FastAPI, Uvicorn, Pydantic v2 | **Render** | Fast asynchronous endpoints with CORS |
 | **Database** | PostgreSQL 15+ | **Supabase** | RLS enabled, indexed on foreign keys & dates |
-| **AI Engine** | Groq Cloud API | Groq Free Tier | `llama-3.3-70b-versatile` / `llama-3.1-8b-instant` |
+| **Primary AI** | Google Gemini (`gemini-3.8-flash`) | Google GenAI API | Powered by `client.interactions.create` with fast failover |
+| **Secondary AI** | Groq Cloud API | Groq Free Tier | `llama-3.3-70b-versatile` / `llama-3.1-8b-instant` |
 
 ---
 

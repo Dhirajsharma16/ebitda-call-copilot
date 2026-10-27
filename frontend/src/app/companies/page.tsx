@@ -15,7 +15,8 @@ import {
   ChevronRight,
   TrendingUp,
   Trash2,
-  Edit
+  Edit,
+  AlertCircle
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Company } from '@/lib/types';
@@ -70,19 +71,28 @@ export default function CompaniesPage() {
     return matchesSearch && matchesIndustry;
   });
 
+  const getCompanyInitials = (name: string) => {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    return name.slice(0, 2).toUpperCase();
+  };
+
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/[0.08]">
         <div>
-          <div className="flex items-center gap-2">
-            <Building2 className="w-6 h-6 text-blue-400" />
-            <h1 className="text-2xl font-extrabold text-white tracking-tight">
-              Company Accounts & Intelligence
-            </h1>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+              <Building2 className="w-3.5 h-3.5" />
+              Prospect Accounts Directory
+            </span>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Target Accounts & Intelligence
+          </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Maintain prospect profiles, user-verified financial baselines, and operational pain points.
+            Verified prospect accounts, operational bottlenecks, and financial margins.
           </p>
         </div>
 
@@ -91,7 +101,7 @@ export default function CompaniesPage() {
             setEditingCompany(null);
             setIsModalOpen(true);
           }}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold uppercase tracking-wider rounded-xl shadow-md shadow-blue-600/30 transition-all self-start sm:self-auto"
+          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-blue-600/30 border border-blue-400/20 transition-all self-start sm:self-auto hover:scale-[1.02]"
         >
           <Plus className="w-4 h-4" />
           <span>Add Company</span>
@@ -99,28 +109,28 @@ export default function CompaniesPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 glass-panel rounded-2xl">
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search by company, contact, or city..."
+            placeholder="Search company, contact, or location..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-xs bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+            className="w-full pl-9 pr-3 py-2 text-xs glass-input rounded-xl text-white placeholder-slate-500"
           />
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-xs text-slate-400 shrink-0">Filter Industry:</span>
+          <span className="text-xs text-slate-400 shrink-0 font-semibold">Industry:</span>
           <select
             value={industryFilter}
             onChange={(e) => setIndustryFilter(e.target.value)}
-            className="w-full sm:w-auto text-xs bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+            className="w-full sm:w-auto text-xs glass-input rounded-xl px-3 py-2 text-white cursor-pointer"
           >
-            <option value="all">All Industries ({companies.length})</option>
+            <option value="all" className="bg-slate-950">All Sectors ({companies.length})</option>
             {industries.map(ind => (
-              <option key={ind} value={ind}>{ind}</option>
+              <option key={ind} value={ind} className="bg-slate-950">{ind}</option>
             ))}
           </select>
         </div>
@@ -128,11 +138,11 @@ export default function CompaniesPage() {
 
       {/* Companies Grid */}
       {loading ? (
-        <div className="p-12 text-center text-slate-500 text-sm bg-slate-900/40 rounded-2xl border border-slate-800">
-          Loading company profiles...
+        <div className="p-12 text-center text-slate-500 text-xs glass-panel rounded-2xl">
+          Loading prospect database...
         </div>
       ) : filteredCompanies.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-slate-900/40 border border-slate-800 space-y-3">
+        <div className="p-12 text-center rounded-2xl glass-panel space-y-3">
           <Building2 className="w-10 h-10 text-slate-600 mx-auto" />
           <p className="text-sm text-slate-400">No company profiles match your current search.</p>
           <button
@@ -150,30 +160,29 @@ export default function CompaniesPage() {
           {filteredCompanies.map((comp) => (
             <div
               key={comp.id}
-              className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 shadow-sm flex flex-col justify-between space-y-4 group transition-all"
+              className="p-5 rounded-2xl glass-card-interactive flex flex-col justify-between space-y-4 group"
             >
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 {/* Header */}
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <Link
-                      href={`/companies/${comp.id}`}
-                      className="font-bold text-base text-white hover:text-blue-400 transition-colors line-clamp-1"
-                    >
-                      {comp.company_name}
-                    </Link>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      {comp.industry && (
-                        <span className="px-2 py-0.5 text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md">
-                          {comp.industry}
-                        </span>
-                      )}
-                      {comp.location && (
-                        <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-slate-500" />
-                          {comp.location}
-                        </span>
-                      )}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/[0.08] flex items-center justify-center font-bold text-xs text-blue-400 shrink-0 shadow-inner group-hover:border-blue-500/40 group-hover:text-white transition-all">
+                      {getCompanyInitials(comp.company_name)}
+                    </div>
+                    <div>
+                      <Link
+                        href={`/companies/${comp.id}`}
+                        className="font-bold text-sm text-white hover:text-blue-400 transition-colors line-clamp-1"
+                      >
+                        {comp.company_name}
+                      </Link>
+                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                        {comp.industry && (
+                          <span className="px-2 py-0.2 text-[10px] font-semibold bg-white/[0.05] text-slate-300 rounded border border-white/[0.06]">
+                            {comp.industry}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -198,11 +207,19 @@ export default function CompaniesPage() {
                   </div>
                 </div>
 
+                {/* Location if available */}
+                {comp.location && (
+                  <div className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-slate-500" />
+                    <span>{comp.location}</span>
+                  </div>
+                )}
+
                 {/* Contact person */}
-                <div className="text-xs text-slate-300 flex items-center gap-2 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80">
+                <div className="text-xs text-slate-300 flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/[0.04]">
                   <User className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                   <div className="truncate">
-                    <span className="font-semibold text-white">{comp.contact_name || 'No contact assigned'}</span>
+                    <span className="font-semibold text-white">{comp.contact_name || 'No contact specified'}</span>
                     {comp.contact_designation && (
                       <span className="text-slate-400 ml-1">({comp.contact_designation})</span>
                     )}
@@ -211,22 +228,22 @@ export default function CompaniesPage() {
 
                 {/* Business challenges */}
                 {comp.business_challenges && (
-                  <div className="text-xs text-slate-400 line-clamp-2 italic bg-slate-950/20 p-2 rounded-lg">
+                  <div className="text-xs text-slate-400 line-clamp-2 italic bg-black/20 p-2 rounded-lg border border-white/[0.02]">
                     "{comp.business_challenges}"
                   </div>
                 )}
 
-                {/* EBITDA Pill */}
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs">
+                {/* Financial Ledger Pill */}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-black/50 border border-white/[0.06] text-xs">
                   <div>
                     <div className="text-[10px] text-slate-400 uppercase font-semibold">Revenue</div>
-                    <div className="font-mono font-bold text-slate-200">
+                    <div className="font-mono font-bold text-slate-200 tabular-nums">
                       {comp.revenue > 0 ? `$${(comp.revenue / 1000000).toFixed(1)}M` : 'Unspecified'}
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-[10px] text-slate-400 uppercase font-semibold">EBITDA Margin</div>
-                    <div className="font-mono font-bold text-emerald-400">
+                    <div className="font-mono font-bold text-emerald-400 tabular-nums">
                       {comp.revenue > 0 ? `${comp.ebitda_margin_pct.toFixed(1)}%` : 'N/A'}
                     </div>
                   </div>
@@ -234,21 +251,21 @@ export default function CompaniesPage() {
               </div>
 
               {/* Actions Footer */}
-              <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-2">
+              <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between gap-2">
                 <Link
                   href={`/companies/${comp.id}`}
                   className="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
                 >
-                  <span>View Details</span>
+                  <span>View Dossier</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
 
                 <Link
                   href={`/workspace?companyId=${comp.id}`}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold transition-all shadow-sm"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
                 >
-                  <PhoneCall className="w-3.5 h-3.5" />
-                  <span>Call Workspace</span>
+                  <PhoneCall className="w-3 h-3" />
+                  <span>Call Now</span>
                 </Link>
               </div>
             </div>

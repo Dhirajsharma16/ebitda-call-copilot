@@ -9,26 +9,27 @@ logger = logging.getLogger(__name__)
 
 FALLBACK_PROMPT = """You are an elite B2B Sales Executive & Financial Strategist preparing for a high-stakes cold call with a CEO, MD, or Senior Executive.
 
-Given the company information and financial metrics provided below, generate high-impact call preparation.
+Given the verified company information and financial metrics provided below, generate a professional, fact-anchored cold call strategy.
 
-IMPORTANT RULES:
-1. ONLY reference information provided. If important details (e.g. specific EBITDA or pain points) are missing, flag them as missing rather than making up numbers.
-2. The tone must be conversational, peer-to-peer, concise, and business-savvy (appropriate for a CEO/MD).
-3. Do NOT make unrealistic promises or guarantee specific dollar savings.
-4. Output MUST be valid JSON strictly matching the requested schema.
+CRITICAL COLD CALLING RULES:
+1. FACTUAL INTEGRITY: ONLY reference information supplied in the prompt. NEVER invent company facts, customer names, financial figures, or unverified claims.
+2. 20-SECOND NATURAL OPENING: The opening line MUST be natural, peer-to-peer, conversational, and calibrated for an unhurried ~20-second delivery (~35-45 words). It must acknowledge their role, bridge to their sector margin reality, and pause with a low-pressure open question.
+3. OPEN-ENDED DISCOVERY (3-5 QUESTIONS): Provide 3 to 5 truly open-ended discovery questions (starting with How, What, In what ways, Walk me through) that investigate operational bottlenecks. Avoid closed yes/no questions.
+4. DISCOVERY-FIRST PRINCIPLE (DO NOT SELL AI UPFRONT): Do NOT prescribe a specific AI product or feature before the problem is validated. The 'ai_problem_solving' output MUST be conditional: e.g., "If [Executive] validates that [bottleneck] is indeed eroding margins, you can then conditionally explore how diagnostic telemetry isolates root causes..."
+5. RESPECTFUL & CONCISE: Zero sales hype, no aggressive pitches, appropriate for a CEO/MD discussion.
 
 Output Schema:
 {
-  "opening_line": "...",
+  "opening_line": "Natural ~20-second peer-to-peer conversational opener (~35-45 words)",
   "discovery_questions": ["q1", "q2", "q3", "q4"],
   "financial_efficiency_questions": ["f1", "f2", "f3"],
   "objections_and_rebuttals": [
     {"objection": "...", "rebuttal": "..."},
     {"objection": "...", "rebuttal": "..."}
   ],
-  "ai_problem_solving": "Concise 2-3 sentence explanation of how AI/analytics can investigate their problem without jargon.",
-  "closing_line": "Natural closing line requesting a 15-minute follow-up meeting.",
-  "missing_data_notes": ["Any data missing that salesperson should verify on call"]
+  "ai_problem_solving": "Conditional diagnostic framework: only to be introduced once executive confirms the bottleneck.",
+  "closing_line": "Natural low-friction closing line requesting a brief 15-minute follow-up meeting.",
+  "missing_data_notes": ["Any unverified or missing data points the salesperson should verify during the call"]
 }
 """
 
@@ -88,9 +89,10 @@ def generate_rule_based_fallback(data: AICallPrepRequest, notice: str) -> AICall
     ]
 
     ai_solving = (
-        f"By deploying targeted AI agents and predictive analytics onto your operational logs, "
-        f"{name} can continuously diagnose root causes behind {challenges.lower()}, "
-        f"pinpointing cost overruns in real-time rather than waiting for post-mortem monthly reconciliations."
+        f"Discovery-First Rule: Do NOT prescribe an AI solution upfront. "
+        f"If {contact} confirms on the call that {challenges.lower()} is directly impacting their operating margin, "
+        f"you can conditionally introduce how telemetry and diagnostic analytics pinpoint cost leakages in real-time "
+        f"without forcing an immediate vendor commitment."
     )
 
     closing = (

@@ -15,7 +15,12 @@ import {
   PhoneCall,
   Check,
   Building2,
-  Percent
+  Percent,
+  TrendingDown,
+  Layers,
+  ArrowUpRight,
+  ShieldCheck,
+  Briefcase
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Company, EBITDACalculationResponse } from '@/lib/types';
@@ -111,64 +116,70 @@ export default function CalculatorPage() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
-      {/* Page Title & Intro */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+    <div className="space-y-8 animate-fade-in max-w-6xl mx-auto">
+      {/* Title & Account Picker */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
         <div>
-          <div className="flex items-center gap-2">
-            <Calculator className="w-6 h-6 text-blue-400" />
-            <h1 className="text-2xl font-extrabold text-white tracking-tight">
-              Interactive EBITDA & Margin Modeler
-            </h1>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Calculator className="w-3.5 h-3.5" />
+              Corporate Finance Modeler
+            </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Calculate Earnings Before Interest, Taxes, Depreciation & Amortization and run sales scenario simulations.
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            EBITDA & Profitability Simulator
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+            Accurately model Earnings Before Interest, Taxes, Depreciation & Amortization, then stress-test cost optimizations for executive calls.
           </p>
         </div>
 
-        {/* Load Company Dropdown */}
-        <div className="flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-slate-400" />
+        {/* Account Selector */}
+        <div className="flex items-center gap-2 self-start lg:self-auto bg-slate-900/80 p-1.5 rounded-xl border border-white/[0.08]">
+          <Building2 className="w-4 h-4 text-blue-400 ml-2" />
           <select
             value={selectedCompanyId}
             onChange={(e) => handleCompanySelect(e.target.value)}
-            className="text-xs bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+            className="text-xs bg-transparent text-white font-semibold focus:outline-none pr-3 py-1 cursor-pointer"
           >
-            <option value="">-- Load from Saved Company --</option>
+            <option value="" className="bg-slate-950">-- Load From Target Account --</option>
             {companies.map(c => (
-              <option key={c.id} value={c.id}>
-                {c.company_name} ({c.revenue > 0 ? `$${(c.revenue / 1000000).toFixed(1)}M` : 'No Rev'})
+              <option key={c.id} value={c.id} className="bg-slate-950">
+                {c.company_name} ({c.revenue > 0 ? `$${(c.revenue / 1000000).toFixed(1)}M Rev` : 'No Rev'})
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      {/* Main Grid: Inputs vs Real-time Metrics */}
+      {/* Main Grid: Inputs vs Results */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column (5 cols): Inputs */}
+        {/* Left Column (5 cols): Input Ledger */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-5">
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-emerald-400" />
-              <span>Core Financial Inputs</span>
-            </h2>
+          <div className="p-6 rounded-2xl glass-panel space-y-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-emerald-400" />
+                <span>Operating Financial Baseline</span>
+              </h2>
+              <span className="text-[10px] text-slate-400 font-mono">USD ($)</span>
+            </div>
 
-            {/* Revenue */}
+            {/* Total Revenue */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                <span>Total Revenue ($)</span>
-                <span className="text-[11px] text-slate-400 font-normal">Annualized / Base</span>
+                <span>Total Annual Revenue</span>
+                <span className="text-[11px] text-slate-400 font-mono">Base</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-mono">$</span>
                 <input
                   type="number"
                   min="0"
-                  step="1000"
+                  step="10000"
                   value={revenue}
                   onChange={(e) => setRevenue(Math.max(0, parseFloat(e.target.value) || 0))}
-                  className="w-full pl-7 pr-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-xl text-white font-mono focus:outline-none focus:border-blue-500"
+                  className="w-full pl-8 pr-4 py-2.5 text-sm glass-input rounded-xl text-white font-mono font-bold tabular-nums"
                 />
               </div>
             </div>
@@ -176,34 +187,34 @@ export default function CalculatorPage() {
             {/* Operating Expenses */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                <span>Operating Expenses ($)</span>
-                <span className="text-[11px] text-slate-400 font-normal">Excl. D&A, Int., Tax</span>
+                <span>Operating Expenses (OpEx)</span>
+                <span className="text-[10px] text-slate-400">Excl. D&A, Int., Tax</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-mono">$</span>
                 <input
                   type="number"
                   min="0"
-                  step="1000"
+                  step="10000"
                   value={operatingExpenses}
                   onChange={(e) => setOperatingExpenses(Math.max(0, parseFloat(e.target.value) || 0))}
-                  className="w-full pl-7 pr-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-xl text-white font-mono focus:outline-none focus:border-blue-500"
+                  className="w-full pl-8 pr-4 py-2.5 text-sm glass-input rounded-xl text-white font-mono font-bold tabular-nums"
                 />
               </div>
             </div>
 
             {/* Optional Reconciliation Toggle */}
-            <div className="pt-2 border-t border-slate-800">
+            <div className="pt-2 border-t border-white/[0.06]">
               <button
                 type="button"
                 onClick={() => setShowReconciliation(!showReconciliation)}
-                className="text-xs text-blue-400 hover:text-blue-300 flex items-center justify-between w-full font-medium"
+                className="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center justify-between w-full py-1 transition-colors"
               >
-                <span>{showReconciliation ? '− Hide D&A, Interest & Taxes' : '+ Optional Reconciliation (D&A, Interest, Taxes)'}</span>
+                <span>{showReconciliation ? '− Collapse D&A, Interest & Taxes' : '+ Optional D&A, Interest & Taxes Reconciliation'}</span>
               </button>
 
               {showReconciliation && (
-                <div className="mt-4 space-y-3 p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80">
+                <div className="mt-3 space-y-3 p-4 bg-black/40 rounded-xl border border-white/[0.06] animate-fade-in">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-[11px] text-slate-400 mb-1">Interest ($)</label>
@@ -212,7 +223,7 @@ export default function CalculatorPage() {
                         min="0"
                         value={interest}
                         onChange={(e) => setInterest(parseFloat(e.target.value) || 0)}
-                        className="w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white font-mono"
+                        className="w-full px-3 py-1.5 text-xs glass-input rounded-lg font-mono"
                       />
                     </div>
                     <div>
@@ -222,7 +233,7 @@ export default function CalculatorPage() {
                         min="0"
                         value={taxes}
                         onChange={(e) => setTaxes(parseFloat(e.target.value) || 0)}
-                        className="w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white font-mono"
+                        className="w-full px-3 py-1.5 text-xs glass-input rounded-lg font-mono"
                       />
                     </div>
                   </div>
@@ -235,7 +246,7 @@ export default function CalculatorPage() {
                         min="0"
                         value={depreciation}
                         onChange={(e) => setDepreciation(parseFloat(e.target.value) || 0)}
-                        className="w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white font-mono"
+                        className="w-full px-3 py-1.5 text-xs glass-input rounded-lg font-mono"
                       />
                     </div>
                     <div>
@@ -245,7 +256,7 @@ export default function CalculatorPage() {
                         min="0"
                         value={amortization}
                         onChange={(e) => setAmortization(parseFloat(e.target.value) || 0)}
-                        className="w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white font-mono"
+                        className="w-full px-3 py-1.5 text-xs glass-input rounded-lg font-mono"
                       />
                     </div>
                   </div>
@@ -253,94 +264,104 @@ export default function CalculatorPage() {
               )}
             </div>
 
-            {/* Formula Explanation Callout */}
-            <div className="p-3 bg-blue-950/20 border border-blue-900/30 rounded-xl text-[11px] text-blue-300 space-y-1">
-              <div className="font-semibold text-blue-200">Standard EBITDA Formula:</div>
-              <div>• EBITDA = Revenue − OpEx (excl. D&A, Int., Tax)</div>
-              <div>• EBITDA Margin (%) = (EBITDA / Revenue) × 100</div>
+            {/* Formula Reference Box */}
+            <div className="p-3.5 bg-blue-950/20 border border-blue-900/30 rounded-xl text-xs text-blue-300/90 space-y-1.5 font-mono">
+              <div className="font-bold text-blue-200 text-[11px] uppercase tracking-wider">Executive Formula:</div>
+              <div className="text-[11px]">• EBITDA = Revenue − OpEx</div>
+              <div className="text-[11px]">• Margin (%) = (EBITDA / Revenue) × 100</div>
             </div>
           </div>
         </div>
 
-        {/* Right Column (7 cols): Calculated Actuals & What-If Scenario */}
+        {/* Right Column (7 cols): Calculated Actuals & Interactive Modeler */}
         <div className="lg:col-span-7 space-y-6">
-          {/* Baseline EBITDA Output Cards */}
+          {/* Baseline Output Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* EBITDA Card */}
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
-              <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Current EBITDA
+            <div className="p-5 rounded-2xl glass-panel relative overflow-hidden">
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                Current Reported EBITDA
               </div>
-              <div className="mt-2 text-3xl font-extrabold font-mono text-emerald-400">
+              <div className="mt-2 text-3xl font-extrabold font-mono text-emerald-400 tabular-nums">
                 ${calculationResult ? calculationResult.ebitda.toLocaleString() : '0'}
               </div>
-              <div className="mt-2 text-xs text-slate-400">
-                Revenue: ${revenue.toLocaleString()}
+              <div className="mt-2 text-xs text-slate-400 flex items-center justify-between pt-2 border-t border-white/[0.06]">
+                <span>Base Revenue:</span>
+                <span className="font-mono text-white">${revenue.toLocaleString()}</span>
               </div>
             </div>
 
             {/* Margin Card */}
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
+            <div className="p-5 rounded-2xl glass-panel relative overflow-hidden">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                   EBITDA Margin
                 </span>
                 <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${getMarginBadgeClass(calculationResult?.margin_classification)}`}>
                   {calculationResult?.margin_classification || 'Calculating...'}
                 </span>
               </div>
-              <div className="mt-2 text-3xl font-extrabold font-mono text-blue-400">
+              <div className="mt-2 text-3xl font-extrabold font-mono text-blue-400 tabular-nums">
                 {calculationResult ? calculationResult.ebitda_margin_pct.toFixed(1) : '0.0'}%
               </div>
-              <div className="mt-2 text-xs text-slate-400">
-                Operating Cost: ${operatingExpenses.toLocaleString()}
+              <div className="mt-2 text-xs text-slate-400 flex items-center justify-between pt-2 border-t border-white/[0.06]">
+                <span>Base OpEx:</span>
+                <span className="font-mono text-white">${operatingExpenses.toLocaleString()}</span>
               </div>
             </div>
           </div>
 
-          {/* Interactive What-If Scenario Modeler */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/40 border border-blue-500/30 shadow-xl space-y-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-blue-400" />
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                  Hypothetical Scenario Modeler ("What-If" Analysis)
-                </h3>
+          {/* Interactive What-If Modeler */}
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/40 border border-blue-500/30 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30">
+                  <Sliders className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                    Executive "What-If" Sensitivity Simulator
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    Demonstrate bottom-line impact of operational streamlining
+                  </p>
+                </div>
               </div>
-              <span className="text-[11px] font-semibold text-blue-300 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20">
-                Sales Strategy Simulator
+
+              <span className="text-[10px] font-bold text-blue-300 bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20 uppercase font-mono">
+                Interactive Modeler
               </span>
             </div>
 
-            {/* Quick Presets */}
-            <div className="flex items-center gap-2 flex-wrap text-xs">
-              <span className="text-slate-400 text-[11px]">Quick Presets:</span>
+            {/* Quick Strategy Presets */}
+            <div className="flex items-center gap-2 flex-wrap text-xs pt-1">
+              <span className="text-slate-400 text-[11px] font-semibold uppercase">Presets:</span>
               <button
                 type="button"
                 onClick={() => applyPreset(0, 5)}
-                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] transition-colors"
+                className="px-2.5 py-1 bg-white/[0.06] hover:bg-blue-600 hover:text-white text-slate-300 rounded-lg text-xs font-medium transition-all"
               >
-                OpEx -5% (Automation)
+                OpEx -5% (Process AI)
               </button>
               <button
                 type="button"
                 onClick={() => applyPreset(3, 4)}
-                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] transition-colors"
+                className="px-2.5 py-1 bg-white/[0.06] hover:bg-blue-600 hover:text-white text-slate-300 rounded-lg text-xs font-medium transition-all"
               >
                 +3% Rev / -4% Cost
               </button>
               <button
                 type="button"
                 onClick={() => applyPreset(0, 8)}
-                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] transition-colors"
+                className="px-2.5 py-1 bg-white/[0.06] hover:bg-blue-600 hover:text-white text-slate-300 rounded-lg text-xs font-medium transition-all"
               >
-                OpEx -8% (Deep Streamlining)
+                OpEx -8% (Deep Consolidation)
               </button>
               <button
                 type="button"
                 onClick={() => applyPreset(0, 0)}
-                className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg text-[11px]"
-                title="Reset scenario sliders"
+                className="px-2 py-1 bg-white/[0.04] hover:bg-slate-700 text-slate-400 rounded-lg text-xs"
+                title="Reset sliders"
               >
                 Reset
               </button>
@@ -349,12 +370,12 @@ export default function CalculatorPage() {
             {/* Sliders */}
             <div className="space-y-4 pt-2">
               {/* Slider 1: Cost Reduction */}
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-slate-300">
-                    Hypothetical Operating Cost Reduction (%):
+                    Hypothetical OpEx Optimization (%):
                   </span>
-                  <span className="font-mono font-bold text-emerald-400 text-sm">
+                  <span className="font-mono font-bold text-emerald-400 text-sm bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                     {costReductionPct}%
                   </span>
                 </div>
@@ -365,22 +386,26 @@ export default function CalculatorPage() {
                   step="0.5"
                   value={costReductionPct}
                   onChange={(e) => setCostReductionPct(parseFloat(e.target.value))}
-                  className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-emerald-500 cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400">
+                <div className="flex justify-between text-[10px] text-slate-400 font-mono">
                   <span>0% (Status Quo)</span>
-                  <span>10% (Target Optimization)</span>
-                  <span>25% (Major Restructure)</span>
+                  <span>10% (Target Streamlining)</span>
+                  <span>25% (Transformative)</span>
                 </div>
               </div>
 
               {/* Slider 2: Revenue Change */}
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-slate-300">
-                    Hypothetical Revenue Change (%):
+                    Hypothetical Revenue Variance (%):
                   </span>
-                  <span className={`font-mono font-bold text-sm ${revChangePct >= 0 ? 'text-blue-400' : 'text-rose-400'}`}>
+                  <span className={`font-mono font-bold text-sm px-2 py-0.5 rounded border ${
+                    revChangePct >= 0 
+                      ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' 
+                      : 'text-rose-400 bg-rose-500/10 border-rose-500/20'
+                  }`}>
                     {revChangePct > 0 ? `+${revChangePct}%` : `${revChangePct}%`}
                   </span>
                 </div>
@@ -391,51 +416,51 @@ export default function CalculatorPage() {
                   step="1"
                   value={revChangePct}
                   onChange={(e) => setRevChangePct(parseFloat(e.target.value))}
-                  className="w-full accent-blue-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-blue-500 cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400">
+                <div className="flex justify-between text-[10px] text-slate-400 font-mono">
                   <span>-20% (Contraction)</span>
-                  <span>0% (Flat)</span>
-                  <span>+30% (Growth)</span>
+                  <span>0% (Neutral)</span>
+                  <span>+30% (Expansion)</span>
                 </div>
               </div>
             </div>
 
-            {/* Projected Scenario Results Grid */}
+            {/* Projected Scenario Ledger Grid */}
             {calculationResult?.scenario && (
-              <div className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 space-y-3">
+              <div className="p-4 sm:p-5 bg-black/60 rounded-xl border border-white/[0.08] space-y-4">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <div className="text-[10px] uppercase font-semibold text-slate-400">Projected EBITDA</div>
-                    <div className="mt-1 font-mono font-bold text-emerald-400 text-base">
+                  <div className="p-3 rounded-xl bg-slate-900 border border-white/[0.06]">
+                    <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Projected EBITDA</div>
+                    <div className="mt-1 font-mono font-extrabold text-emerald-400 text-base tabular-nums">
                       ${calculationResult.scenario.projected_ebitda.toLocaleString()}
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <div className="text-[10px] uppercase font-semibold text-slate-400">Projected Margin</div>
-                    <div className="mt-1 font-mono font-bold text-blue-400 text-base">
+                  <div className="p-3 rounded-xl bg-slate-900 border border-white/[0.06]">
+                    <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Projected Margin</div>
+                    <div className="mt-1 font-mono font-extrabold text-blue-400 text-base tabular-nums">
                       {calculationResult.scenario.projected_ebitda_margin_pct.toFixed(1)}%
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <div className="text-[10px] uppercase font-semibold text-slate-400">EBITDA Delta</div>
-                    <div className={`mt-1 font-mono font-bold text-base ${calculationResult.scenario.ebitda_delta >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  <div className="p-3 rounded-xl bg-slate-900 border border-white/[0.06]">
+                    <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">EBITDA Delta ($)</div>
+                    <div className={`mt-1 font-mono font-extrabold text-base tabular-nums ${calculationResult.scenario.ebitda_delta >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       {calculationResult.scenario.ebitda_delta >= 0 ? '+' : ''}${calculationResult.scenario.ebitda_delta.toLocaleString()}
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <div className="text-[10px] uppercase font-semibold text-slate-400">Margin Delta</div>
-                    <div className={`mt-1 font-mono font-bold text-base ${calculationResult.scenario.margin_delta_pct >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  <div className="p-3 rounded-xl bg-slate-900 border border-white/[0.06]">
+                    <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Margin Delta (bps)</div>
+                    <div className={`mt-1 font-mono font-extrabold text-base tabular-nums ${calculationResult.scenario.margin_delta_pct >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       {calculationResult.scenario.margin_delta_pct >= 0 ? '+' : ''}{calculationResult.scenario.margin_delta_pct.toFixed(1)}%
                     </div>
                   </div>
                 </div>
 
-                {/* Important Disclaimer */}
-                <div className="flex items-start gap-2 pt-2 text-[11px] text-amber-300/90 italic">
+                {/* Prominent Disclaimer */}
+                <div className="flex items-start gap-2.5 pt-2 text-[11px] text-amber-300/90 italic bg-amber-950/20 p-3 rounded-lg border border-amber-900/30">
                   <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                   <span>
                     {calculationResult.scenario.disclaimer}
@@ -445,10 +470,10 @@ export default function CalculatorPage() {
             )}
 
             {/* Launch Call with this scenario */}
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-1">
               <Link
                 href={selectedCompanyId ? `/workspace?companyId=${selectedCompanyId}` : '/workspace'}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold uppercase tracking-wider rounded-lg shadow-md transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.02]"
               >
                 <PhoneCall className="w-4 h-4" />
                 <span>Open in Live Workspace</span>
