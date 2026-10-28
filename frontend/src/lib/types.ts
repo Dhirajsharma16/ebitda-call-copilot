@@ -88,6 +88,8 @@ export interface HealthStatus {
   status: string;
   timestamp: string;
   environment: string;
+  gemini_configured?: boolean;
+  gemini_model?: string;
   groq_configured: boolean;
   groq_model: string;
   database_mode: string;

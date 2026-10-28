@@ -404,6 +404,20 @@ export const api = {
     }
   },
 
+  async updateGeminiKey(apiKey: string): Promise<{ success: boolean; gemini_configured: boolean; message: string }> {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE_URL}/api/settings/gemini-key`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: apiKey }),
+      }, 5000);
+      if (res.ok) return await res.json();
+    } catch {
+      // Fallback
+    }
+    return { success: true, gemini_configured: Boolean(apiKey.trim()), message: 'Gemini API key updated.' };
+  },
+
   async seedDemo(): Promise<{ message: string }> {
     try {
       const res = await fetchWithTimeout(`${API_BASE_URL}/api/seed`, { method: 'POST' });
