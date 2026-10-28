@@ -136,38 +136,6 @@ function NavbarContent() {
               })}
             </div>
 
-            {/* System Status & Quick Actions */}
-            <div className="hidden lg:flex items-center gap-3">
-              {/* AI Key Status Button */}
-              <button
-                onClick={() => setKeyModalOpen(true)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-bold transition-all cursor-pointer ${
-                  isGeminiActive
-                    ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/50'
-                    : 'bg-amber-950/60 text-amber-300 border-amber-500/40 hover:bg-amber-900/50'
-                }`}
-                title="Configure Gemini API Key"
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isGeminiActive ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                  <span className={`relative inline-flex rounded-full h-2 w-2 ${isGeminiActive ? 'bg-emerald-500' : 'bg-amber-400'}`} />
-                </span>
-                <span className="font-mono text-xs">
-                  {isGeminiActive ? 'Gemini 3.8 Flash' : 'AI Key (Synthesis)'}
-                </span>
-                <Key className="w-3 h-3 opacity-80 ml-0.5" />
-              </button>
-
-              {/* Primary Action */}
-              <Link
-                href="/workspace"
-                className="flex items-center gap-2 px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-white bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-blue-600/30 border border-blue-400/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <PhoneCall className="w-3.5 h-3.5" />
-                <span>Start Call</span>
-              </Link>
-            </div>
-
             {/* Mobile menu button */}
             <div className="flex md:hidden items-center gap-2">
               <button
@@ -202,28 +170,6 @@ function NavbarContent() {
                 </Link>
               );
             })}
-
-            <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setKeyModalOpen(true);
-                }}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-amber-300 bg-amber-950/60 border border-amber-500/40 rounded-xl"
-              >
-                <Key className="w-4 h-4" />
-                {isGeminiActive ? 'Gemini AI Configured' : 'Configure Gemini API Key'}
-              </button>
-
-              <Link
-                href="/workspace"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-blue-600 rounded-xl"
-              >
-                <PhoneCall className="w-4 h-4" />
-                Launch Live Workspace
-              </Link>
-            </div>
           </div>
         )}
       </nav>

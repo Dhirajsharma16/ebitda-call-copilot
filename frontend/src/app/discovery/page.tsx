@@ -50,7 +50,7 @@ export default function ProspectDiscoveryPage() {
   const [geography, setGeography] = useState<string>('Tamil Nadu (Coimbatore / Tirupur / Chennai)');
   const [customGeography, setCustomGeography] = useState<string>('');
   const [companySize, setCompanySize] = useState<string>('Any');
-  const [limit, setLimit] = useState<number>(10);
+  const [limit, setLimit] = useState<number>(1);
   const [additionalRequirements, setAdditionalRequirements] = useState<string>('');
 
   // Options loaded from backend
@@ -65,7 +65,7 @@ export default function ProspectDiscoveryPage() {
       'Rajasthan (Bhilwara / Jaipur)'
     ],
     company_sizes: ['Small', 'Medium', 'Large', 'Any'],
-    limit_options: [10, 25, 50]
+    limit_options: [1, 5, 10, 25]
   });
 
   // Search execution states
@@ -109,7 +109,7 @@ export default function ProspectDiscoveryPage() {
       industry: 'Textile',
       geography: 'Tamil Nadu (Coimbatore / Tirupur / Chennai)',
       company_size: 'Any',
-      limit: 10,
+      limit: 1,
       additional_requirements: 'Vertical spinning mills with captive power or modernization investments'
     });
   }, []);
@@ -130,6 +130,10 @@ export default function ProspectDiscoveryPage() {
     const timer3 = setTimeout(() => {
       setSearchStep('Calibrating Prospect Fit Score & generating diagnostic hypotheses...');
     }, 2800);
+
+    const timer4 = setTimeout(() => {
+      setSearchStep('Synthesizing deep corporate intelligence & plant locations via Gemini AI...');
+    }, 6000);
 
     try {
       const activeGeography = customGeography.trim() || geography;
@@ -152,6 +156,7 @@ export default function ProspectDiscoveryPage() {
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
+      clearTimeout(timer4);
       setIsSearching(false);
       setSearchStep('');
     }
@@ -432,7 +437,7 @@ export default function ProspectDiscoveryPage() {
               >
                 {options.limit_options.map((lim) => (
                   <option key={lim} value={lim} style={{ backgroundColor: '#0B132B', color: '#FFFFFF' }}>
-                    {lim} Verified Companies
+                    {lim === 1 ? '1 Verified Company' : `${lim} Verified Companies`}
                   </option>
                 ))}
               </select>

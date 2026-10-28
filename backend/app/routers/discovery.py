@@ -42,8 +42,8 @@ def get_discovery_options():
         "industries": AVAILABLE_INDUSTRIES,
         "geography_presets": GEOGRAPHY_PRESETS,
         "company_sizes": ["Any", "Small (< ₹100Cr)", "Medium (₹100Cr - ₹500Cr)", "Large (> ₹500Cr)"],
-        "counts": [10, 25, 50],
-        "limit_options": [10, 25, 50]
+        "counts": [1, 5, 10, 25],
+        "limit_options": [1, 5, 10, 25]
     }
 
 @router.post("/search", response_model=ProspectDiscoveryResponse)

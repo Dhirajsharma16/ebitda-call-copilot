@@ -199,7 +199,7 @@ class ProspectDiscoveryRequest(BaseModel):
     industry: str = Field(..., description="Target industry e.g. Textile, Spinning, Automobile, etc.")
     geography: str = Field(default="India", description="Target geography e.g. India, Coimbatore, Pune, Gujarat")
     company_size: str = Field(default="Any", description="Small, Medium, Large, or Any")
-    limit: int = Field(default=10, ge=1, le=50, description="10, 25, or 50")
+    limit: int = Field(default=1, ge=1, le=50, description="1, 5, 10, or 25")
     additional_requirements: Optional[str] = Field(None, description="Custom research focus instructions")
 
 class DiscoveredProspect(BaseModel):

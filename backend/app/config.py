@@ -23,10 +23,25 @@ class Settings(BaseSettings):
     # CORS Origin
     FRONTEND_ORIGIN: Union[str, List[str]] = "*"
 
+    _backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+    _env_path = os.path.join(_backend_dir, ".env")
+
+
+
     model_config = SettingsConfigDict(
-        env_file=".env",
+
+
+        env_file=_env_path,
+
+
         env_file_encoding="utf-8",
+
+
         extra="ignore",
+
+
     )
 
     @property
