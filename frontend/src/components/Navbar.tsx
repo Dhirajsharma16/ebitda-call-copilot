@@ -15,7 +15,6 @@ import {
   Database, 
   CheckCircle2, 
   AlertTriangle,
-  RotateCcw,
   ShieldAlert,
   Flame,
   Activity,
@@ -28,8 +27,6 @@ function NavbarContent() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [health, setHealth] = useState<HealthStatus | null>(null);
-  const [loadingSeed, setLoadingSeed] = useState(false);
-  const [seedNotice, setSeedNotice] = useState<string | null>(null);
 
   useEffect(() => {
     checkHealth();
@@ -43,21 +40,6 @@ function NavbarContent() {
       setHealth(h);
     } catch {
       setHealth(null);
-    }
-  };
-
-  const handleSeed = async () => {
-    setLoadingSeed(true);
-    try {
-      const res = await api.seedDemo();
-      setSeedNotice(res.message);
-      setTimeout(() => setSeedNotice(null), 3500);
-      window.location.reload();
-    } catch {
-      setSeedNotice('Error refreshing demo data');
-      setTimeout(() => setSeedNotice(null), 3000);
-    } finally {
-      setLoadingSeed(false);
     }
   };
 
@@ -132,17 +114,6 @@ function NavbarContent() {
               </span>
             </div>
 
-            {/* Demo Reset button */}
-            <button
-              onClick={handleSeed}
-              disabled={loadingSeed}
-              title="Reset sample prospect accounts and call logs"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-900/80 hover:bg-slate-800 hover:text-white border border-white/[0.08] rounded-xl transition-all"
-            >
-              <RotateCcw className={`w-3.5 h-3.5 text-slate-400 ${loadingSeed ? 'animate-spin text-blue-400' : ''}`} />
-              <span>Sample Data</span>
-            </button>
-
             {/* Primary Action */}
             <Link
               href="/workspace"
@@ -164,14 +135,6 @@ function NavbarContent() {
           </div>
         </div>
       </div>
-
-      {/* Demo Seed Toast notification */}
-      {seedNotice && (
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold text-center py-2 px-4 shadow-md animate-fade-in flex items-center justify-center gap-2">
-          <CheckCircle2 className="w-4 h-4" />
-          <span>{seedNotice}</span>
-        </div>
-      )}
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
@@ -197,16 +160,6 @@ function NavbarContent() {
           })}
 
           <div className="pt-3 border-t border-white/[0.08] flex flex-col gap-2">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                handleSeed();
-              }}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold text-slate-300 bg-slate-900 rounded-xl border border-white/[0.08]"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Reset Demo Data
-            </button>
             <Link
               href="/workspace"
               onClick={() => setMobileMenuOpen(false)}

@@ -424,6 +424,57 @@ export const api = {
 const DEFAULT_SAMPLE_COMPANIES: Company[] = [
   {
     id: 'a1111111-1111-1111-1111-111111111111',
+    company_name: 'K.P.R. Mill Limited',
+    website: 'https://kprmilllimited.com',
+    industry: 'Spinning & Textile',
+    location: 'Coimbatore, Tamil Nadu, India',
+    contact_name: 'K.P. Ramasamy',
+    contact_designation: 'Managing Director',
+    business_challenges: 'Tamil Nadu grid power tariff surges and raw cotton procurement price fluctuations impact spinning spread. Expanding captive solar/wind power to protect 19% EBITDA margin.',
+    revenue: 62480000000,
+    operating_expenses: 50600000000,
+    ebitda: 11880000000,
+    ebitda_margin_pct: 19.01,
+    company_size: 'Large',
+    created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 'b2222222-2222-2222-2222-222222222222',
+    company_name: 'Craftsman Automation Limited',
+    website: 'https://craftsmanautomation.com',
+    industry: 'Auto Components & Precision Engineering',
+    location: 'Coimbatore, Tamil Nadu, India',
+    contact_name: 'Srinivasan Ravi',
+    contact_designation: 'Managing Director',
+    business_challenges: 'High aluminum die-casting rejection rates and CNC tooling degradation across powertrain lines. Real-time machining telemetry needed to safeguard 21% EBITDA margin.',
+    revenue: 44500000000,
+    operating_expenses: 35150000000,
+    ebitda: 9350000000,
+    ebitda_margin_pct: 21.01,
+    company_size: 'Large',
+    created_at: new Date(Date.now() - 7 * 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+  },
+  {
+    id: 'c3333333-3333-3333-3333-333333333333',
+    company_name: 'Cosmo First Limited',
+    website: 'https://cosmofirst.com',
+    industry: 'Packaging & Specialty Films',
+    location: 'New Delhi / Aurangabad, India',
+    contact_name: 'Pankaj Poddar',
+    contact_designation: 'Group Chief Executive Officer',
+    business_challenges: 'Polypropylene resin price swings and ocean freight cost spikes compress export margins. Deploying line automation and scrap reduction to protect 14% EBITDA margin.',
+    revenue: 31200000000,
+    operating_expenses: 26830000000,
+    ebitda: 4370000000,
+    ebitda_margin_pct: 14.01,
+    company_size: 'Medium',
+    created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 4 * 86400000).toISOString(),
+  },
+  {
+    id: 'd4444444-4444-4444-4444-444444444444',
     company_name: 'RapidRoute Trucking & Fleet',
     website: 'https://rapidroute-fleet.example.com',
     industry: 'Transportation & Logistics',
@@ -435,11 +486,12 @@ const DEFAULT_SAMPLE_COMPANIES: Company[] = [
     operating_expenses: 46000000,
     ebitda: 4000000,
     ebitda_margin_pct: 8.0,
-    created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 86400000).toISOString(),
+    company_size: 'Medium',
+    created_at: new Date(Date.now() - 12 * 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 6 * 86400000).toISOString(),
   },
   {
-    id: 'b2222222-2222-2222-2222-222222222222',
+    id: 'e5555555-5555-5555-5555-555555555555',
     company_name: 'CloudSync Software',
     website: 'https://cloudsync-software.example.com',
     industry: 'Enterprise Software / SaaS',
@@ -451,54 +503,7 @@ const DEFAULT_SAMPLE_COMPANIES: Company[] = [
     operating_expenses: 14000000,
     ebitda: 6000000,
     ebitda_margin_pct: 30.0,
-    created_at: new Date(Date.now() - 7 * 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 2 * 86400000).toISOString(),
-  },
-  {
-    id: 'c3333333-3333-3333-3333-333333333333',
-    company_name: 'GreenBean Coffee Cafes',
-    website: 'https://greenbean-cafes.example.com',
-    industry: 'Retail & Food Chain',
-    location: 'Chicago, IL, USA',
-    contact_name: 'Sarah Adams',
-    contact_designation: 'Chief Operating Officer',
-    business_challenges: 'Perishable dairy and coffee bean waste across 40 regional cafes is leaking $500,000/year, keeping their EBITDA margin compressed at 15%.',
-    revenue: 15000000,
-    operating_expenses: 12750000,
-    ebitda: 2250000,
-    ebitda_margin_pct: 15.0,
-    created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 4 * 86400000).toISOString(),
-  },
-  {
-    id: 'd4444444-4444-4444-4444-444444444444',
-    company_name: 'Precision Metal Parts',
-    website: 'https://precision-metalparts.example.com',
-    industry: 'Manufacturing',
-    location: 'Cleveland, OH, USA',
-    contact_name: 'Elena Rostova',
-    contact_designation: 'Managing Director',
-    business_challenges: 'CNC machine scrap rate at 4.8% is wasting $1.2M in raw aluminum and steel. Looking to optimize production efficiency to protect a 20% margin.',
-    revenue: 30000000,
-    operating_expenses: 24000000,
-    ebitda: 6000000,
-    ebitda_margin_pct: 20.0,
-    created_at: new Date(Date.now() - 12 * 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 6 * 86400000).toISOString(),
-  },
-  {
-    id: 'e5555555-5555-5555-5555-555555555555',
-    company_name: 'MetroHealth Medical Centers',
-    website: 'https://metrohealth-centers.example.com',
-    industry: 'Healthcare Services',
-    location: 'Atlanta, GA, USA',
-    contact_name: 'Dr. Robert Sterling',
-    contact_designation: 'Executive Managing Director',
-    business_challenges: 'Manual insurance billing paperwork errors cause 45-day reimbursement delays and tie up $3.5M in clinic cash flow.',
-    revenue: 40000000,
-    operating_expenses: 30000000,
-    ebitda: 10000000,
-    ebitda_margin_pct: 25.0,
+    company_size: 'Medium',
     created_at: new Date(Date.now() - 14 * 86400000).toISOString(),
     updated_at: new Date(Date.now() - 3 * 86400000).toISOString(),
   }
@@ -508,12 +513,50 @@ const DEFAULT_SAMPLE_CALLS: CallRecord[] = [
   {
     id: 'f1111111-1111-1111-1111-111111111111',
     company_id: 'a1111111-1111-1111-1111-111111111111',
+    company_name: 'K.P.R. Mill Limited',
+    contact_name: 'K.P. Ramasamy',
+    call_date: new Date(Date.now() - 2 * 86400000).toISOString(),
+    notes: 'Spoke with MD K.P. Ramasamy regarding power cost optimization across their Coimbatore spinning units. He mentioned captive solar/wind is mitigating grid tariff hikes but spindle telemetry can save another 2.5% in operating costs. Scheduled follow-up next Tuesday.',
+    call_outcome: 'Follow-up Required',
+    follow_up_date: new Date(Date.now() - 86400000).toISOString(), // Overdue
+    ai_preparation: {
+      opening_line: 'Hi Mr. Ramasamy, noticed K.P.R. Mill is commissioning captive renewable capacity in Tamil Nadu—curious how your team is safeguarding your 19% spinning margin against rising grid tariffs this fiscal.',
+      discovery_questions: [
+        'What percentage of your operating cost per kg of yarn is currently driven by power tariffs?',
+        'How quickly does mill leadership spot energy leakage across your spindle frames?'
+      ]
+    },
+    created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    is_overdue: true,
+  },
+  {
+    id: 'f2222222-2222-2222-2222-222222222222',
+    company_id: 'b2222222-2222-2222-2222-222222222222',
+    company_name: 'Craftsman Automation Limited',
+    contact_name: 'Srinivasan Ravi',
+    call_date: new Date(Date.now() - 86400000).toISOString(),
+    notes: 'Discussed CNC machining scrap reduction and casting yield in their Coimbatore plants. Ravi was very receptive to benchmark data and requested a 15-minute diagnostic session for their plant engineering head.',
+    call_outcome: 'Interested',
+    follow_up_date: new Date(Date.now() + 3 * 86400000).toISOString(),
+    ai_preparation: {
+      opening_line: 'Hi Mr. Ravi, reaching out because auto-component leaders in Coimbatore are utilizing real-time tool telemetry to prevent raw aluminum scrap from eroding their 21% EBITDA margin.',
+      discovery_questions: [
+        'What is your current scrap and rework rate across powertrain cylinder blocks?',
+        'How is raw aluminum price volatility impacting your OEM supply contracts?'
+      ]
+    },
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    is_overdue: false,
+  },
+  {
+    id: 'f3333333-3333-3333-3333-333333333333',
+    company_id: 'd4444444-4444-4444-4444-444444444444',
     company_name: 'RapidRoute Trucking & Fleet',
     contact_name: 'John Miller',
     call_date: new Date(Date.now() - 2 * 86400000).toISOString(),
     notes: 'Spoke with CEO John. He said diesel fuel costs are eating 92% of their sales. He agreed that cutting fuel waste by 3% saves them $1.3M straight to EBITDA. Promised to send a 1-page breakdown and call him back Tuesday at 10 AM.',
     call_outcome: 'Follow-up Required',
-    follow_up_date: new Date(Date.now() - 86400000).toISOString(), // Overdue
+    follow_up_date: new Date(Date.now() + 4 * 86400000).toISOString(),
     ai_preparation: {
       opening_line: 'John, noticed RapidRoute expanded interstate delivery fleets—curious how you are safeguarding your 8% operating margin against diesel spikes.',
       discovery_questions: [
@@ -522,27 +565,11 @@ const DEFAULT_SAMPLE_CALLS: CallRecord[] = [
       ]
     },
     created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
-    is_overdue: true,
-  },
-  {
-    id: 'f2222222-2222-2222-2222-222222222222',
-    company_id: 'c3333333-3333-3333-3333-333333333333',
-    company_name: 'GreenBean Coffee Cafes',
-    contact_name: 'Sarah Adams',
-    call_date: new Date(Date.now() - 86400000).toISOString(),
-    notes: 'Sarah confirmed cafe milk and food waste is costing them $500k/yr before their board meeting. Scheduled a 15-minute live demo on Thursday at 2 PM.',
-    call_outcome: 'Interested',
-    follow_up_date: new Date(Date.now() + 3 * 86400000).toISOString(),
-    ai_preparation: {
-      opening_line: 'Sarah, reaching out because food chains we advise cut perishables waste by 18% to protect their 15% EBITDA margin.',
-      discovery_questions: ['How much does store-level perishables waste impact your bottom line?']
-    },
-    created_at: new Date(Date.now() - 86400000).toISOString(),
     is_overdue: false,
   },
   {
-    id: 'f3333333-3333-3333-3333-333333333333',
-    company_id: 'b2222222-2222-2222-2222-222222222222',
+    id: 'f4444444-4444-4444-4444-444444444444',
+    company_id: 'e5555555-5555-5555-5555-555555555555',
     company_name: 'CloudSync Software',
     contact_name: 'David Chen',
     call_date: new Date(Date.now() - 4 * 86400000).toISOString(),
@@ -553,14 +580,14 @@ const DEFAULT_SAMPLE_CALLS: CallRecord[] = [
     is_overdue: false,
   },
   {
-    id: 'f4444444-4444-4444-4444-444444444444',
-    company_id: 'd4444444-4444-4444-4444-444444444444',
-    company_name: 'Precision Metal Parts',
-    contact_name: 'Elena Rostova',
+    id: 'f5555555-5555-5555-5555-555555555555',
+    company_id: 'c3333333-3333-3333-3333-333333333333',
+    company_name: 'Cosmo First Limited',
+    contact_name: 'Pankaj Poddar',
     call_date: new Date(Date.now() - 3 * 86400000).toISOString(),
-    notes: 'Elena wants her head of factory operations on the call. Re-scheduled for next Monday to review machine defect inspection data.',
+    notes: 'Brief chat with executive office. CEO Pankaj Poddar agreed to review a 1-page efficiency model on BOPP barrier film resin yields next Thursday.',
     call_outcome: 'Follow-up Required',
-    follow_up_date: new Date(Date.now() + 5 * 86400000).toISOString(),
+    follow_up_date: new Date(Date.now() + 6 * 86400000).toISOString(),
     created_at: new Date(Date.now() - 3 * 86400000).toISOString(),
     is_overdue: false,
   }
@@ -570,7 +597,7 @@ function getLocalCompanies(search?: string): Company[] {
   if (typeof window === 'undefined') return DEFAULT_SAMPLE_COMPANIES;
   const raw = localStorage.getItem('ebitda_copilot_companies');
   let list: Company[] = DEFAULT_SAMPLE_COMPANIES;
-  if (!raw || raw.includes('Apex Industrial Logistics Corp')) {
+  if (!raw || raw.includes('Apex Industrial') || raw.includes('GreenBean') || raw.includes('Precision Metal Parts') || !raw.includes('K.P.R. Mill Limited')) {
     localStorage.setItem('ebitda_copilot_companies', JSON.stringify(DEFAULT_SAMPLE_COMPANIES));
     list = DEFAULT_SAMPLE_COMPANIES;
   } else {
@@ -650,7 +677,7 @@ function getLocalCalls(companyId?: string, outcome?: string, overdueOnly?: boole
   if (typeof window === 'undefined') return DEFAULT_SAMPLE_CALLS;
   const raw = localStorage.getItem('ebitda_copilot_calls');
   let list: CallRecord[] = DEFAULT_SAMPLE_CALLS;
-  if (!raw || raw.includes('Apex Industrial')) {
+  if (!raw || raw.includes('Apex Industrial') || raw.includes('GreenBean') || raw.includes('Precision Metal Parts') || !raw.includes('K.P.R. Mill Limited')) {
     localStorage.setItem('ebitda_copilot_calls', JSON.stringify(DEFAULT_SAMPLE_CALLS));
     list = DEFAULT_SAMPLE_CALLS;
   } else {
