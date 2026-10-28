@@ -529,22 +529,37 @@ def discover_companies(request: ProspectDiscoveryRequest) -> ProspectDiscoveryRe
     # 1. First, search our verified public industrial registry for matches
     for item in VERIFIED_CORPORATE_DIRECTORY:
         # Industry filter match
+        ind_lower = target_ind.lower()
+        comp_ind_lower = item["industry"].lower()
         ind_match = (
-            target_ind.lower() in item["industry"].lower() or
-            item["industry"].lower() in target_ind.lower() or
-            (target_ind == "Other Manufacturing")
+            ind_lower in comp_ind_lower or
+            comp_ind_lower in ind_lower or
+            (target_ind == "Other Manufacturing") or
+            ("textile" in ind_lower and "spinning" in comp_ind_lower) or
+            ("spinning" in ind_lower and "textile" in comp_ind_lower) or
+            ("auto" in ind_lower and "auto" in comp_ind_lower)
         )
 
         # Geography filter match
-        geo_match = (
-            target_geo.lower() in ["india", "all india", "any", ""] or
-            target_geo.lower() in item["location"].lower()
-        )
+        geo_lower = target_geo.lower().strip()
+        comp_loc_lower = item["location"].lower()
+        if not geo_lower or geo_lower in ["india", "all india", "any", "", "india (all regions)"] or "all regions" in geo_lower or "all india" in geo_lower:
+            geo_match = True
+        elif geo_lower in comp_loc_lower:
+            geo_match = True
+        else:
+            geo_tokens = [tok.strip() for tok in re.split(r'[\(\)/,]', geo_lower) if len(tok.strip()) > 2]
+            geo_match = any(tok in comp_loc_lower for tok in geo_tokens)
 
         # Size filter match
+        target_size_lower = target_size.lower().strip()
+        comp_size_lower = item.get("company_size", "Medium").lower().strip()
         size_match = (
-            target_size.lower() in ["any", ""] or
-            target_size.lower() == item.get("company_size", "Medium").lower()
+            target_size_lower in ["any", ""] or
+            (target_size_lower.startswith("small") and comp_size_lower == "small") or
+            (target_size_lower.startswith("medium") and comp_size_lower == "medium") or
+            (target_size_lower.startswith("large") and comp_size_lower == "large") or
+            target_size_lower == comp_size_lower
         )
 
         # Additional instructions match (boosts fit score)

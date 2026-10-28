@@ -64,7 +64,13 @@ async def prepare_call(payload: AICallPrepRequest):
 
     # Use Gemini 3.8 Flash as primary
     if settings.GEMINI_API_KEY.strip():
-        return await generate_gemini_call_prep(payload)
+        gemini_res = await generate_gemini_call_prep(payload)
+        # If Gemini returned simulation/fallback and Groq is configured, try Groq
+        if gemini_res.is_simulated and settings.GROQ_API_KEY.strip():
+            groq_res = await generate_groq_call_prep(payload)
+            if not groq_res.is_simulated:
+                return groq_res
+        return gemini_res
     
     # Fallback to Groq
     return await generate_groq_call_prep(payload)
