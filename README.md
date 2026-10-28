@@ -183,12 +183,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 7. Sample Walkthrough Script for Sales Reps
 
-1. **Review Dashboard:** Open [http://localhost:3000](http://localhost:3000) to inspect today's overdue follow-ups.
+1. **Review Dashboard:** Open [https://ebitda-call-copilot.vercel.app/](url) to inspect today's overdue follow-ups.
 2. **Select Account:** Choose *Apex Industrial Logistics Corp* ($42.5M Revenue, 10.0% EBITDA Margin).
 3. **Model Scenario:** Open `/calculator`, toggle Cost Reduction to 5%, observing a projected +$1.91M EBITDA expansion.
 4. **Launch Call:** Click **"Start Call Session"** to open `/workspace?companyId=...`.
 5. **Start Timer:** Click **"Start Call"** on the top header.
-6. **Deliver Opening:** Read the customized opening line: *"Marcus, noticed Apex expanded fleet routes across the south corridor..."*
+6. **Deliver Opening:** Read the customised opening line: *"Marcus, noticed Apex expanded fleet routes across the south corridor..."*
 7. **Conduct Discovery:** Click **"+ Notes"** next to Question 1 to automatically populate the notes field with prospect prompts.
 8. **Handle Pushback:** Click the **Objections** tab if the prospect mentions budget freezes to reference the rebuttal.
 9. **Log Outcome:** Select **"Follow-up Required"**, set follow-up date for next Tuesday, and click **"Save Call Record"**.
