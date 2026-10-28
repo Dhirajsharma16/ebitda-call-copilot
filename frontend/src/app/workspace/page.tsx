@@ -422,6 +422,18 @@ function WorkspaceContent() {
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
+
+          {/* Quick Draft CEO Email in Header - No scrolling needed */}
+          <button
+            type="button"
+            onClick={handleOpenEmailModal}
+            disabled={!activeCompany}
+            className="px-3.5 py-1.5 bg-gradient-to-r from-purple-700 via-purple-600 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-purple-950/40 transition-all hover:scale-[1.02] cursor-pointer disabled:opacity-40"
+            title="Draft CEO Follow-Up Email (Gemini AI)"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+            <span className="hidden sm:inline">Draft CEO Email</span>
+          </button>
         </div>
       </div>
 
@@ -959,6 +971,31 @@ function WorkspaceContent() {
               </span>
             </div>
 
+            {/* Quick Pinned Actions - Always visible at top without scrolling */}
+            <div className="grid grid-cols-2 gap-2 p-2 bg-slate-950/80 rounded-xl border border-white/[0.06]">
+              <button
+                type="button"
+                onClick={handleOpenEmailModal}
+                disabled={!activeCompany}
+                className="py-2 px-3 bg-gradient-to-r from-purple-900/50 to-indigo-900/50 hover:from-purple-800/70 hover:to-indigo-800/70 border border-purple-500/40 text-purple-200 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-sm disabled:opacity-40 cursor-pointer"
+                title="Draft CEO Email directly"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+                <span>Draft CEO Email</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleSaveCall}
+                disabled={savingCall || !activeCompany}
+                className="py-2 px-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-sm disabled:opacity-40 cursor-pointer"
+                title="Save call outcome"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>Save Call</span>
+              </button>
+            </div>
+
             {/* Quick Tag Injector Buttons */}
             <div className="flex items-center gap-1.5 flex-wrap text-xs">
               <span className="text-slate-400 text-[10px] font-semibold uppercase">Tags:</span>
@@ -1189,30 +1226,53 @@ function WorkspaceContent() {
       {isEmailModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
           <div className="bg-[#0B1120] border border-white/[0.12] rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-100 overflow-hidden">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-slate-950/70">
+            {/* Modal Header with Quick Action Buttons - Zero Scrolling Needed */}
+            <div className="flex items-center justify-between px-6 py-3.5 border-b border-white/[0.08] bg-slate-950/80 flex-wrap gap-2">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-purple-600/20 text-purple-400 border border-purple-500/30">
-                  <Mail className="w-5 h-5" />
+                  <Mail className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-base font-extrabold text-white tracking-tight flex items-center gap-2">
+                  <h3 className="text-sm font-extrabold text-white tracking-tight flex items-center gap-2">
                     <span>Executive Follow-Up Email</span>
                     <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
                       {emailModelUsed || 'Google Gemini 3.8 Flash'}
                     </span>
                   </h3>
-                  <p className="text-[11px] text-slate-400">
-                    Targeted to {activeCompany?.contact_name || 'Executive'} ({activeCompany?.contact_designation || 'Leader'})
+                  <p className="text-[10px] text-slate-400">
+                    To {activeCompany?.contact_name || 'Executive'} ({activeCompany?.contact_designation || 'Leader'})
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsEmailModalOpen(false)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+
+              {!generatingEmail && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleCopyEmail}
+                    className="px-3 py-1.5 text-xs font-semibold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors border border-white/[0.1] flex items-center gap-1 cursor-pointer"
+                  >
+                    {copiedEmail ? <Check className="w-3 h-3 text-emerald-300" /> : <Copy className="w-3 h-3" />}
+                    <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleOpenInGmail}
+                    className="flex items-center gap-1 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-rose-600 via-rose-500 to-red-600 hover:from-rose-500 hover:to-red-500 rounded-xl shadow-md shadow-rose-600/30 transition-all cursor-pointer hover:scale-[1.02]"
+                    title="Opens Gmail compose with pre-filled message"
+                  >
+                    <Send className="w-3 h-3" />
+                    <span>Open in Gmail</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsEmailModalOpen(false)}
+                    className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Modal Body */}
@@ -1265,7 +1325,7 @@ function WorkspaceContent() {
                       <span className="text-[10px] text-slate-400">Pre-filled by Gemini • Fully editable</span>
                     </div>
                     <textarea
-                      rows={9}
+                      rows={5}
                       value={emailBody}
                       onChange={(e) => setEmailBody(e.target.value)}
                       className="w-full p-4 text-xs glass-input rounded-xl text-slate-200 leading-relaxed font-sans"

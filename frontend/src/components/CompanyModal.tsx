@@ -168,12 +168,30 @@ export default function CompanyModal({ isOpen, onClose, onSuccess, initialData }
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="submit"
+              form="company-form"
+              disabled={loading}
+              className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-blue-600/30 disabled:opacity-50 transition-all hover:scale-[1.02] cursor-pointer"
+            >
+              {loading ? (
+                <span>Saving...</span>
+              ) : (
+                <>
+                  <Building2 className="w-3.5 h-3.5" />
+                  <span>{initialData ? 'Update' : 'Save Account'}</span>
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Fact check notice */}
@@ -185,7 +203,7 @@ export default function CompanyModal({ isOpen, onClose, onSuccess, initialData }
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
+        <form id="company-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
           {error && (
             <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs">
               {error}
@@ -392,31 +410,33 @@ export default function CompanyModal({ isOpen, onClose, onSuccess, initialData }
             </div>
           </div>
 
-          {/* Footer Actions */}
-          <div className="pt-2 flex items-center justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors border border-white/[0.06]"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex items-center gap-2 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-blue-600/30 disabled:opacity-50 transition-all hover:scale-[1.02]"
-            >
-              {loading ? (
-                <span>Saving...</span>
-              ) : (
-                <>
-                  <Building2 className="w-3.5 h-3.5" />
-                  <span>{initialData ? 'Update Dossier' : 'Save Account'}</span>
-                </>
-              )}
-            </button>
-          </div>
         </form>
+
+        {/* Pinned Sticky Footer Actions - Zero Scrolling Needed */}
+        <div className="px-6 py-3 border-t border-white/[0.08] bg-slate-950/80 flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors border border-white/[0.06] cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="company-form"
+            disabled={loading}
+            className="flex items-center gap-2 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-blue-600/30 disabled:opacity-50 transition-all hover:scale-[1.02] cursor-pointer"
+          >
+            {loading ? (
+              <span>Saving...</span>
+            ) : (
+              <>
+                <Building2 className="w-3.5 h-3.5" />
+                <span>{initialData ? 'Update Dossier' : 'Save Account'}</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
