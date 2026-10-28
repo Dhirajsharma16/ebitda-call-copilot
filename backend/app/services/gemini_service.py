@@ -48,10 +48,9 @@ def _extract_json_from_text(text: str) -> Dict[str, Any]:
 
 def _call_gemini_interaction(api_key: str, model: str, user_content: str) -> str:
     from google import genai
-    from google.genai import types
-    client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=25.0))
+    client = genai.Client(api_key=api_key)
     models_to_try = [model]
-    for fallback_model in ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
+    for fallback_model in ["gemma-4-26b-a4b-it", "gemma-4-31b-it", "gemini-3.8-flash"]:
         if fallback_model not in models_to_try:
             models_to_try.append(fallback_model)
     last_err = None
@@ -62,8 +61,6 @@ def _call_gemini_interaction(api_key: str, model: str, user_content: str) -> str
                 return resp.text
         except Exception as inner_e:
             last_err = inner_e
-            if "429" in str(inner_e) or "RESOURCE_EXHAUSTED" in str(inner_e):
-                raise inner_e
             continue
     if last_err:
         raise last_err
@@ -100,7 +97,7 @@ async def generate_gemini_call_prep(data: AICallPrepRequest) -> AICallPrepRespon
 
         raw_text = await asyncio.wait_for(
             asyncio.to_thread(_call_gemini_interaction, api_key, model, user_content),
-            timeout=25.0
+            timeout=45.0
         )
 
         parsed = _extract_json_from_text(raw_text)
@@ -188,7 +185,7 @@ Output as valid JSON:
     try:
         raw_text = await asyncio.wait_for(
             asyncio.to_thread(_call_gemini_interaction, api_key, model, prompt),
-            timeout=25.0
+            timeout=45.0
         )
         parsed = _extract_json_from_text(raw_text)
         return {
@@ -238,7 +235,7 @@ Output as valid JSON:
     try:
         raw_text = await asyncio.wait_for(
             asyncio.to_thread(_call_gemini_interaction, api_key, model, prompt),
-            timeout=25.0
+            timeout=45.0
         )
         parsed = _extract_json_from_text(raw_text)
         return {
