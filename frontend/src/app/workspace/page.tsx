@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { 
@@ -73,6 +74,7 @@ function WorkspaceContent() {
   const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
 
   // Executive Follow-up Email Modal States
+  const [mounted, setMounted] = useState<boolean>(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState<boolean>(false);
   const [generatingEmail, setGeneratingEmail] = useState<boolean>(false);
   const [emailSubject, setEmailSubject] = useState<string>('');
@@ -89,6 +91,7 @@ function WorkspaceContent() {
   const [showProvenanceDetails, setShowProvenanceDetails] = useState<boolean>(true);
 
   useEffect(() => {
+    setMounted(true);
     loadCompanies();
   }, []);
 
@@ -1222,9 +1225,9 @@ function WorkspaceContent() {
         </div>
       </div>
 
-      {/* Executive Follow-Up Email Modal */}
-      {isEmailModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+      {/* Executive Follow-Up Email Modal - Portaled to document.body for zero scrolling */}
+      {mounted && isEmailModalOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
           <div className="bg-[#0B1120] border border-white/[0.12] rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-100 overflow-hidden">
             {/* Modal Header with Quick Action Buttons - Zero Scrolling Needed */}
             <div className="flex items-center justify-between px-6 py-3.5 border-b border-white/[0.08] bg-slate-950/80 flex-wrap gap-2">
@@ -1395,7 +1398,8 @@ function WorkspaceContent() {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

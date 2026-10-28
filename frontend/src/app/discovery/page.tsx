@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -83,12 +84,14 @@ export default function ProspectDiscoveryPage() {
   const [dismissedProspects, setDismissedProspects] = useState<Set<string>>(new Set());
 
   // Interactive Modals / Drawers
+  const [mounted, setMounted] = useState<boolean>(false);
   const [selectedProspect, setSelectedProspect] = useState<DiscoveredProspect | null>(null);
   const [actionNotice, setActionNotice] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
   const [addingTargetId, setAddingTargetId] = useState<string | null>(null);
 
   // Load options & initial discovery on mount
   useEffect(() => {
+    setMounted(true);
     async function fetchOpts() {
       try {
         const opts = await api.getDiscoveryOptions();
@@ -929,9 +932,9 @@ export default function ProspectDiscoveryPage() {
         )}
       </div>
 
-      {/* Comprehensive Corporate Dossier Drawer / Modal */}
-      {selectedProspect && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+      {/* Comprehensive Corporate Dossier Drawer / Modal - Portaled to document.body */}
+      {mounted && selectedProspect && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
           <div className="relative w-full max-w-3xl max-h-[90vh] bg-[#0F172A] border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
             {/* Modal Header */}
             <div className="p-6 border-b border-slate-800 bg-[#0B1120] flex items-start justify-between gap-4">
@@ -1145,7 +1148,8 @@ export default function ProspectDiscoveryPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

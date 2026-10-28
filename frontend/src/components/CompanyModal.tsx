@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Building2, Globe, MapPin, User, Briefcase, AlertCircle, DollarSign, Sparkles, ShieldCheck, Loader2, Lightbulb } from 'lucide-react';
 import { Company } from '@/lib/types';
 import { api } from '@/lib/api';
@@ -26,6 +27,7 @@ const COMMON_INDUSTRIES = [
 ];
 
 export default function CompanyModal({ isOpen, onClose, onSuccess, initialData }: CompanyModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState({
     company_name: '',
     website: '',
@@ -73,6 +75,10 @@ export default function CompanyModal({ isOpen, onClose, onSuccess, initialData }
       setResearching(false);
     }
   };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setAiBenchmark(null);
@@ -150,8 +156,10 @@ export default function CompanyModal({ isOpen, onClose, onSuccess, initialData }
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+  if (!mounted || !isOpen) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
       <div className="bg-[#0B1120] border border-white/[0.1] rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-100 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-slate-950/60">
@@ -438,6 +446,7 @@ export default function CompanyModal({ isOpen, onClose, onSuccess, initialData }
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
