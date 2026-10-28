@@ -13,6 +13,14 @@ export interface Company {
   operating_expenses: number;
   ebitda: number;
   ebitda_margin_pct: number;
+  company_size?: string | null;
+  products_services?: string | null;
+  expansion_news?: string | null;
+  source_urls?: string[];
+  fit_score?: number | null;
+  evidence_confidence?: string | null;
+  discovery_angle?: string | null;
+  research_summary?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -108,4 +116,72 @@ export interface CompanyResearchResponse {
     executive_hook: string;
   };
   model: string;
+}
+
+// ---------------------------------------------------------
+// AI Prospect Discovery Types
+// ---------------------------------------------------------
+export interface DiscoveredProspect {
+  id?: string | null;
+  company_name: string;
+  website?: string | null;
+  industry: string;
+  location: string;
+  products_services?: string | null;
+  company_size?: string;
+  revenue?: number | null;
+  operating_expenses?: number | null;
+  ebitda?: number | null;
+  ebitda_margin_pct?: number | null;
+  expansion_news?: string | null;
+  source_urls?: string[];
+  research_date?: string | null;
+  contact_name?: string | null;
+  contact_designation?: string | null;
+  prospect_fit_score: number;
+  fit_score_reason: string;
+  evidence_confidence: 'High' | 'Medium' | 'Low' | string;
+  potential_discovery_angle: string;
+  research_summary: string;
+  is_saved_in_accounts?: boolean;
+  existing_account_id?: string | null;
+}
+
+export interface ProspectDiscoveryRequest {
+  industry: string;
+  geography: string;
+  company_size?: string;
+  limit?: number;
+  additional_requirements?: string;
+}
+
+export interface ProspectDiscoveryResponse {
+  success: boolean;
+  industry: string;
+  geography: string;
+  total_found: number;
+  prospects: DiscoveredProspect[];
+  research_timestamp: string;
+  search_grounding_used: boolean;
+  provider_notice?: string | null;
+}
+
+export interface DiscoveryOptionsResponse {
+  industries: string[];
+  geography_presets: string[];
+  company_sizes: string[];
+  limit_options: number[];
+}
+
+export interface AddProspectTargetRequest {
+  prospect: DiscoveredProspect;
+  force_update?: boolean;
+}
+
+export interface AddProspectTargetResponse {
+  success: boolean;
+  already_exists: boolean;
+  message: string;
+  company_id: string;
+  company: Company;
 }

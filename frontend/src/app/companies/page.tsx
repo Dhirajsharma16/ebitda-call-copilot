@@ -16,7 +16,10 @@ import {
   TrendingUp,
   Trash2,
   Edit,
-  AlertCircle
+  AlertCircle,
+  Compass,
+  Sparkles,
+  ShieldCheck
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Company } from '@/lib/types';
@@ -96,16 +99,26 @@ export default function CompaniesPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setEditingCompany(null);
-            setIsModalOpen(true);
-          }}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-blue-600/30 border border-blue-400/20 transition-all self-start sm:self-auto hover:scale-[1.02]"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Company</span>
-        </button>
+        <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+          <Link
+            href="/discovery"
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 text-xs font-bold uppercase tracking-wider rounded-xl border border-blue-500/30 transition-all hover:scale-[1.02]"
+          >
+            <Compass className="w-4 h-4 text-blue-400" />
+            <span>Discover with AI</span>
+          </Link>
+
+          <button
+            onClick={() => {
+              setEditingCompany(null);
+              setIsModalOpen(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-blue-600/30 border border-blue-400/20 transition-all hover:scale-[1.02]"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Company</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
@@ -180,6 +193,16 @@ export default function CompaniesPage() {
                         {comp.industry && (
                           <span className="px-2 py-0.2 text-[10px] font-semibold bg-white/[0.05] text-slate-300 rounded border border-white/[0.06]">
                             {comp.industry}
+                          </span>
+                        )}
+                        {comp.company_size && (
+                          <span className="px-1.5 py-0.2 text-[10px] font-medium bg-slate-800 text-slate-400 rounded">
+                            {comp.company_size}
+                          </span>
+                        )}
+                        {comp.fit_score && (
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">
+                            <Sparkles className="w-2.5 h-2.5" /> Fit {comp.fit_score}
                           </span>
                         )}
                       </div>

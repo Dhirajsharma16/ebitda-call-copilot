@@ -59,6 +59,14 @@ def _enrich_company(comp: Dict[str, Any]) -> CompanyOut:
         business_challenges=comp.get("business_challenges"),
         revenue=revenue,
         operating_expenses=opex,
+        company_size=comp.get("company_size"),
+        products_services=comp.get("products_services"),
+        expansion_news=comp.get("expansion_news"),
+        source_urls=comp.get("source_urls") or [],
+        fit_score=comp.get("fit_score"),
+        evidence_confidence=comp.get("evidence_confidence"),
+        discovery_angle=comp.get("discovery_angle"),
+        research_summary=comp.get("research_summary"),
         ebitda=ebitda,
         ebitda_margin_pct=margin,
         created_at=created_dt,
@@ -300,6 +308,34 @@ class DatabaseService:
             return _enrich_company(comp)
         return None
 
+    def find_company_by_name_or_website(self, company_name: str, website: Optional[str] = None) -> Optional[CompanyOut]:
+        """Finds existing company matching normalized company name or official website."""
+        import re
+        norm_name = re.sub(r'\b(pvt|private|ltd|limited|corp|corporation|inc|incorporated|llc|co)\b', '', company_name.lower().strip())
+        norm_name = re.sub(r'[^a-z0-9]', '', norm_name)
+
+        norm_web = None
+        if website:
+            w = re.sub(r'^https?://', '', website.lower().strip())
+            w = re.sub(r'^www\.', '', w).rstrip('/')
+            norm_web = w or None
+
+        all_comps = self.list_companies()
+        for c in all_comps:
+            c_name = re.sub(r'\b(pvt|private|ltd|limited|corp|corporation|inc|incorporated|llc|co)\b', '', c.company_name.lower().strip())
+            c_name = re.sub(r'[^a-z0-9]', '', c_name)
+
+            if norm_name and c_name and (norm_name == c_name or norm_name in c_name or c_name in norm_name):
+                return c
+
+            if norm_web and c.website:
+                cw = re.sub(r'^https?://', '', c.website.lower().strip())
+                cw = re.sub(r'^www\.', '', cw).rstrip('/')
+                if cw and norm_web == cw:
+                    return c
+
+        return None
+
     def create_company(self, data: CompanyCreate) -> CompanyOut:
         now = datetime.now(timezone.utc)
         new_id = str(uuid.uuid4())
@@ -314,6 +350,14 @@ class DatabaseService:
             "business_challenges": data.business_challenges,
             "revenue": data.revenue,
             "operating_expenses": data.operating_expenses,
+            "company_size": data.company_size,
+            "products_services": data.products_services,
+            "expansion_news": data.expansion_news,
+            "source_urls": data.source_urls or [],
+            "fit_score": data.fit_score,
+            "evidence_confidence": data.evidence_confidence,
+            "discovery_angle": data.discovery_angle,
+            "research_summary": data.research_summary,
             "created_at": now.isoformat(),
             "updated_at": now.isoformat(),
         }
@@ -322,10 +366,35 @@ class DatabaseService:
         if sb:
             try:
                 res = sb.table("companies").insert(record).execute()
-                if res.data:
-                    return _enrich_company(res.data[0])
+                if res.data and len(res.data) > 0:
+                    inserted = _enrich_company(res.data[0])
+                    _memory_companies[new_id] = res.data[0]
+                    return inserted
             except Exception as e:
-                logger.error(f"Supabase create_company error: {e}")
+                logger.warning(f"Supabase full insert error (retrying core fields): {e}")
+                try:
+                    # Fallback to core columns if custom columns not migrated yet
+                    core_record = {
+                        "id": new_id,
+                        "company_name": data.company_name,
+                        "website": data.website,
+                        "industry": data.industry,
+                        "location": data.location,
+                        "contact_name": data.contact_name,
+                        "contact_designation": data.contact_designation,
+                        "business_challenges": data.business_challenges or data.discovery_angle,
+                        "revenue": data.revenue,
+                        "operating_expenses": data.operating_expenses,
+                        "created_at": now.isoformat(),
+                        "updated_at": now.isoformat(),
+                    }
+                    res_core = sb.table("companies").insert(core_record).execute()
+                    if res_core.data and len(res_core.data) > 0:
+                        merged = {**res_core.data[0], **record}
+                        _memory_companies[new_id] = merged
+                        return _enrich_company(merged)
+                except Exception as inner_e:
+                    logger.error(f"Supabase core insert error: {inner_e}")
 
         _memory_companies[new_id] = record
         return _enrich_company(record)

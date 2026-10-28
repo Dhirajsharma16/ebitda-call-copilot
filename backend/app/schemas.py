@@ -22,6 +22,14 @@ class CompanyBase(BaseModel):
     business_challenges: Optional[str] = Field(None, description="Known operational or margin challenges")
     revenue: float = Field(default=0.0, ge=0.0, description="Annual or relevant period revenue")
     operating_expenses: float = Field(default=0.0, ge=0.0, description="Operating expenses excluding D&A, interest, tax")
+    company_size: Optional[str] = Field(None, description="Small, Medium, Large")
+    products_services: Optional[str] = Field(None, description="Core manufactured products and services")
+    expansion_news: Optional[str] = Field(None, description="Recent public expansion, capex, or business developments")
+    source_urls: Optional[List[str]] = Field(default_factory=list, description="Verified public sources")
+    fit_score: Optional[int] = Field(None, description="Prospect suitability score 0-100")
+    evidence_confidence: Optional[str] = Field(None, description="High, Medium, Low")
+    discovery_angle: Optional[str] = Field(None, description="Hypothesized EBITDA exploration angle")
+    research_summary: Optional[str] = Field(None, description="Executive research synopsis")
 
 class CompanyCreate(CompanyBase):
     pass
@@ -36,6 +44,14 @@ class CompanyUpdate(BaseModel):
     business_challenges: Optional[str] = None
     revenue: Optional[float] = Field(None, ge=0.0)
     operating_expenses: Optional[float] = Field(None, ge=0.0)
+    company_size: Optional[str] = None
+    products_services: Optional[str] = None
+    expansion_news: Optional[str] = None
+    source_urls: Optional[List[str]] = None
+    fit_score: Optional[int] = None
+    evidence_confidence: Optional[str] = None
+    discovery_angle: Optional[str] = None
+    research_summary: Optional[str] = None
 
 class CompanyOut(CompanyBase):
     id: str
@@ -175,3 +191,59 @@ class HealthResponse(BaseModel):
     groq_model: str
     database_mode: str # "supabase" or "in-memory-fallback"
     database_connected: bool
+
+# ---------------------------------------------------------
+# AI Prospect Discovery Schemas
+# ---------------------------------------------------------
+class ProspectDiscoveryRequest(BaseModel):
+    industry: str = Field(..., description="Target industry e.g. Textile, Spinning, Automobile, etc.")
+    geography: str = Field(default="India", description="Target geography e.g. India, Coimbatore, Pune, Gujarat")
+    company_size: str = Field(default="Any", description="Small, Medium, Large, or Any")
+    limit: int = Field(default=10, ge=1, le=50, description="10, 25, or 50")
+    additional_requirements: Optional[str] = Field(None, description="Custom research focus instructions")
+
+class DiscoveredProspect(BaseModel):
+    id: Optional[str] = None
+    company_name: str
+    website: Optional[str] = None
+    industry: str = "Other Manufacturing"
+    location: str = "India"
+    products_services: Optional[str] = None
+    company_size: str = "Medium"
+    revenue: Optional[float] = None
+    operating_expenses: Optional[float] = None
+    ebitda: Optional[float] = None
+    ebitda_margin_pct: Optional[float] = None
+    expansion_news: Optional[str] = None
+    source_urls: List[str] = Field(default_factory=list)
+    research_date: Optional[str] = None
+    contact_name: Optional[str] = None
+    contact_designation: Optional[str] = None
+    prospect_fit_score: int = Field(default=75, ge=0, le=100)
+    fit_score_reason: str = ""
+    evidence_confidence: str = "Medium"  # "High" | "Medium" | "Low"
+    potential_discovery_angle: str = ""
+    research_summary: str = ""
+    is_saved_in_accounts: bool = False
+    existing_account_id: Optional[str] = None
+
+class ProspectDiscoveryResponse(BaseModel):
+    success: bool = True
+    industry: str
+    geography: str
+    total_found: int
+    prospects: List[DiscoveredProspect]
+    research_timestamp: str
+    search_grounding_used: bool = True
+    provider_notice: Optional[str] = None
+
+class AddProspectTargetRequest(BaseModel):
+    prospect: DiscoveredProspect
+    force_update: bool = False
+
+class AddProspectTargetResponse(BaseModel):
+    success: bool
+    already_exists: bool
+    message: str
+    company_id: str
+    company: CompanyOut

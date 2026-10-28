@@ -7,10 +7,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Clean existing tables if needed for fresh migrations
--- DROP TABLE IF EXISTS call_records CASCADE;
--- DROP TABLE IF EXISTS companies CASCADE;
-
 -- 1. COMPANIES TABLE
 CREATE TABLE IF NOT EXISTS companies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -23,9 +19,28 @@ CREATE TABLE IF NOT EXISTS companies (
     business_challenges TEXT,
     revenue NUMERIC(15, 2) DEFAULT 0.00,
     operating_expenses NUMERIC(15, 2) DEFAULT 0.00,
+    -- AI Prospect Discovery extensions (Safe optional columns)
+    company_size VARCHAR(50) DEFAULT 'Medium',
+    products_services TEXT,
+    expansion_news TEXT,
+    source_urls TEXT[] DEFAULT '{}',
+    fit_score INT DEFAULT 75,
+    evidence_confidence VARCHAR(50) DEFAULT 'Medium',
+    discovery_angle TEXT,
+    research_summary TEXT,
     created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
+
+-- Safe Alter Table migration if companies table already exists:
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS company_size VARCHAR(50) DEFAULT 'Medium';
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS products_services TEXT;
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS expansion_news TEXT;
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS source_urls TEXT[] DEFAULT '{}';
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS fit_score INT DEFAULT 75;
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS evidence_confidence VARCHAR(50) DEFAULT 'Medium';
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS discovery_angle TEXT;
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS research_summary TEXT;
 
 -- 2. CALL RECORDS TABLE
 CREATE TABLE IF NOT EXISTS call_records (
@@ -68,11 +83,11 @@ CREATE TRIGGER trigger_companies_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- 5. ROW LEVEL SECURITY (RLS) POLICIES
--- Disable RLS for seamless direct read/write from API and Frontend
+-- Disable RLS for seamless direct read/write from API and Frontend:
 ALTER TABLE companies DISABLE ROW LEVEL SECURITY;
 ALTER TABLE call_records DISABLE ROW LEVEL SECURITY;
 
--- Or if you keep RLS enabled, allow public access for all roles:
+-- If you prefer RLS enabled in production, these policies allow anon and authenticated access:
 DROP POLICY IF EXISTS "Allow all access on companies" ON companies;
 CREATE POLICY "Allow all access on companies"
     ON companies FOR ALL
@@ -86,11 +101,3 @@ CREATE POLICY "Allow all access on call_records"
     TO public
     USING (true)
     WITH CHECK (true);
-    TO anon, authenticated
-    USING (true);
-
-DROP POLICY IF EXISTS "Allow anon delete access on call_records" ON call_records;
-CREATE POLICY "Allow anon delete access on call_records"
-    ON call_records FOR DELETE
-    TO anon, authenticated
-    USING (true);

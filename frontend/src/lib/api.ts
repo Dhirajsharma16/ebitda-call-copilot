@@ -1,4 +1,19 @@
-import { Company, CallRecord, EBITDACalculationResponse, AICallPrep, HealthStatus, FollowUpSummary, FollowUpEmailResponse, CompanyResearchResponse } from './types';
+import { 
+  Company, 
+  CallRecord, 
+  EBITDACalculationResponse, 
+  AICallPrep, 
+  HealthStatus, 
+  FollowUpSummary, 
+  FollowUpEmailResponse, 
+  CompanyResearchResponse,
+  DiscoveredProspect,
+  ProspectDiscoveryRequest,
+  ProspectDiscoveryResponse,
+  DiscoveryOptionsResponse,
+  AddProspectTargetRequest,
+  AddProspectTargetResponse
+} from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
@@ -300,6 +315,94 @@ export const api = {
       },
       model: 'synthesis-engine'
     };
+  },
+
+  async getDiscoveryOptions(): Promise<DiscoveryOptionsResponse> {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE_URL}/api/discovery/options`, { method: 'GET' }, 5000);
+      if (res.ok) return await res.json();
+    } catch {
+      // Fallback
+    }
+    return {
+      industries: ['Textile', 'Spinning', 'Automobile', 'Auto Components', 'Packaging', 'FMCG', 'Chemicals', 'Other Manufacturing'],
+      geography_presets: [
+        'India (All Regions)',
+        'Tamil Nadu (Coimbatore / Tirupur / Chennai)',
+        'Gujarat (Ahmedabad / Surat / Vadodara / Vapi)',
+        'Maharashtra (Pune / Chakan / Aurangabad / Mumbai)',
+        'Punjab & Haryana (Ludhiana / Sonipat / Panipat)',
+        'Rajasthan (Bhilwara / Jaipur)'
+      ],
+      company_sizes: ['Small', 'Medium', 'Large', 'Any'],
+      limit_options: [10, 25, 50]
+    };
+  },
+
+  async discoverProspects(params: ProspectDiscoveryRequest): Promise<ProspectDiscoveryResponse> {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE_URL}/api/discovery/search`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      }, 45000);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `Company discovery failed with HTTP ${res.status}`);
+      }
+      return await res.json();
+    } catch (err: any) {
+      throw new Error(err.message || 'Discovery search failed. Check your network or try a different filter.');
+    }
+  },
+
+  async addProspectToTarget(payload: AddProspectTargetRequest): Promise<AddProspectTargetResponse> {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE_URL}/api/discovery/add-target`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }, 15000);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `Failed to add target (${res.status})`);
+      }
+      return await res.json();
+    } catch (e: any) {
+      // Client-side fallback if backend offline
+      const p = payload.prospect;
+      const existing = getLocalCompanies().find(c => 
+        c.company_name.toLowerCase().trim() === p.company_name.toLowerCase().trim() ||
+        (p.website && c.website && p.website.toLowerCase().includes(c.website.toLowerCase()))
+      );
+      if (existing && !payload.force_update) {
+        return {
+          success: true,
+          already_exists: true,
+          message: `'${p.company_name}' is already in your Target Accounts.`,
+          company_id: existing.id,
+          company: existing
+        };
+      }
+      const saved = saveLocalCompany({
+        company_name: p.company_name,
+        website: p.website || undefined,
+        industry: p.industry || undefined,
+        location: p.location || undefined,
+        contact_name: p.contact_name || undefined,
+        contact_designation: p.contact_designation || undefined,
+        business_challenges: p.potential_discovery_angle || 'Identified via AI Prospect Discovery',
+        revenue: p.revenue || 0,
+        operating_expenses: p.operating_expenses || 0,
+      });
+      return {
+        success: true,
+        already_exists: false,
+        message: `'${p.company_name}' added to Target Accounts.`,
+        company_id: saved.id,
+        company: saved
+      };
+    }
   },
 
   async seedDemo(): Promise<{ message: string }> {

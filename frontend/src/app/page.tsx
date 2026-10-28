@@ -25,7 +25,8 @@ import {
   Sparkles,
   Lightbulb,
   HelpCircle,
-  Flame
+  Flame,
+  Compass
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Company, CallRecord, FollowUpSummary } from '@/lib/types';
@@ -141,7 +142,15 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Action Buttons */}
-        <div className="flex items-center gap-2.5 self-start lg:self-auto">
+        <div className="flex items-center gap-2.5 self-start lg:self-auto flex-wrap">
+          <Link
+            href="/discovery"
+            className="flex items-center gap-2 px-3.5 py-2.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 text-xs font-semibold uppercase tracking-wider rounded-xl border border-blue-500/30 hover:border-blue-500/50 transition-all shadow-sm"
+          >
+            <Compass className="w-4 h-4 text-blue-400" />
+            <span>AI Discovery</span>
+          </Link>
+
           <button
             onClick={() => setIsCompanyModalOpen(true)}
             className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-900/90 hover:bg-slate-800 text-slate-200 text-xs font-semibold uppercase tracking-wider rounded-xl border border-white/[0.08] hover:border-white/20 transition-all shadow-sm"

@@ -18,7 +18,8 @@ import {
   RotateCcw,
   ShieldAlert,
   Flame,
-  Activity
+  Activity,
+  Compass
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { HealthStatus } from '@/lib/types';
@@ -62,7 +63,8 @@ function NavbarContent() {
 
   const navLinks = [
     { name: 'Dashboard', href: '/', icon: BarChart3 },
-    { name: 'Companies', href: '/companies', icon: Building2 },
+    { name: 'Target Accounts', href: '/companies', icon: Building2 },
+    { name: 'AI Prospect Discovery', href: '/discovery', icon: Compass },
     { name: 'EBITDA Calculator', href: '/calculator', icon: Calculator },
     { name: 'Live Workspace', href: '/workspace', icon: PhoneCall },
     { name: 'Call History', href: '/calls', icon: Clock },

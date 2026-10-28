@@ -4,11 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import db
 from app.schemas import HealthResponse
-from app.routers import companies, calculator, ai_assistant, calls, seed
+from app.routers import companies, calculator, ai_assistant, calls, seed, discovery
 
 app = FastAPI(
     title="AI EBITDA Cold Call Copilot API",
-    description="Backend API powering financial EBITDA modeling, AI call preparation with Google Gemini (gemini-3.8-flash) & Groq.",
+    description="Backend API powering financial EBITDA modeling, AI call preparation with Google Gemini (gemini-3.8-flash) & Groq, and AI Prospect Discovery.",
     version="1.0.0",
 )
 
@@ -28,6 +28,7 @@ app.include_router(calculator.router)
 app.include_router(ai_assistant.router)
 app.include_router(calls.router)
 app.include_router(seed.router)
+app.include_router(discovery.router)
 
 @app.get("/", tags=["Root"])
 def root():
